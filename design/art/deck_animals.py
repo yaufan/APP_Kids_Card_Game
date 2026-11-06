@@ -446,19 +446,16 @@ def sheep():
     for pts in ([(56, 30, 7), (58, 60, 5.4), (60, 86, 5.2)], [(-58, 30, 7.5), (-60, 60, 5.6), (-60, 86, 5.2)]):
         o.append(hoof_leg(pts, lg([(0, "#5A4E46"), (1, "#3A322C")]), "#1A1614", dark="#000", op=.3))
     body = cloud(-12, -8, 96, 58, 22, 1.0, jit=.05, seed=4)
-    shade, hi = [], []
-    for _ in range(90):
-        x, y = rng.uniform(-104, 80), rng.uniform(-60, 44)
-        if ((x + 12) / 90) ** 2 + ((y + 8) / 52) ** 2 > 1:
+    lumps = []
+    for _ in range(80):
+        x, y = rng.uniform(-104, 80), rng.uniform(-62, 46)
+        if ((x + 12) / 92) ** 2 + ((y + 8) / 54) ** 2 > 1:
             continue
-        r = rng.uniform(5, 8)
-        shade.append(f"M{n_(x - r)},{n_(y)}a{n_(r)},{n_(r * .8)} 0 0 0 {n_(2 * r)},0")
-        hi.append(f"M{n_(x - r * .5)},{n_(y - r * .45)}h{n_(r * .6)}")
-    inner = [glow(-10, 30, 96, 30, "#B8A98E", .55),
-             glow(-30, -44, 70, 20, "#FFFFFF", .8),
-             f'<path d="{"".join(shade)}" stroke="#A8987C" stroke-width="2.4" fill="none" opacity=".28" stroke-linecap="round"/>',
-             f'<path d="{"".join(shade)}" stroke="#A8987C" stroke-width="1" fill="none" opacity=".3" stroke-linecap="round"/>',
-             f'<path d="{"".join(hi)}" stroke="#FFFFFF" stroke-width="3" fill="none" opacity=".7" stroke-linecap="round"/>']
+        r = rng.uniform(7, 11)
+        lumps.append(glow(x + r * .3, y + r * .35, r, r * .85, "#A8987C", .22, hard=.1))
+        lumps.append(glow(x - r * .2, y - r * .25, r * .8, r * .7, "#FFFFFF", .5, hard=.1))
+    inner = [glow(-10, 30, 96, 30, "#B8A98E", .5),
+             glow(-30, -44, 70, 20, "#FFFFFF", .7)] + lumps
     o.append(form(body, rg([(0, "#FBF7EE"), (.6, wool), (1, "#D8CCB4")], .4, .3, .75), "".join(inner), dark="#5A4A30", op=.4, w=7))
     # head: a long dark face, ears out sideways, a wool cap
     o.append(form(tube([(64, -34, 7), (72, -28, 6)]), "#2E2824", dark="#000", op=.3, w=2))
@@ -730,9 +727,8 @@ def mouse():
     o = [ground(0, 52, 96, 6, .2)]
     tl = [(-70, 14, 4.2), (-96, 32, 3.4), (-122, 22, 2.8), (-128, -10, 2.2), (-116, -40, 1.6), (-98, -52, 1)]
     o.append(form(tube(tl), lg([(0, "#C9A8A0"), (1, "#9A807A")], 0, 0, 1, 1), "", dark="#3A2420", op=.35, w=2))
-    o.append(form(circ(64, -50, 15), rg([(0, "#E8B8B0"), (1, "#B08A84")]), "", dark="#3A2420", op=.4, w=3))
-    for x in (-50, 52):
-        o.append(S(f"M{x},36 L{x + 2},48", "#C9A098", 4) + S(f"M{x - 4},50 L{x + 10},50", "#D9B0A8", 3))
+    o.append(form(ell(72, -42, 12, 17, 24), lg([(0, "#C9A49E"), (1, "#9A7E78")]), "", dark="#3A2420", op=.4, w=3))
+    o.append(S("M48,40 L54,49 M-56,40 L-44,49", "#C9A098", 4) + S("M48,49 L60,49 M-50,49 L-36,49", "#D9B0A8", 3))
     body = blob([(106, 10), (100, 0), (86, -14), (68, -28), (48, -38), (16, -48), (-20, -50), (-52, -40), (-72, -18), (-74, 8),
                  (-62, 28), (-36, 40), (4, 44), (42, 40), (68, 30), (88, 22), (100, 18)])
 
@@ -744,10 +740,11 @@ def mouse():
              glow(86, 0, 16, 10, "#B0AAA4", .5),
              strokes(rng, 260, (-76, -52, 106, 46), flow, ["#B8B2AC", "#5E5852", "#E0DAD4"], (3, 5), .6, .35)]
     o.append(form(body, lg([(0, "#7A746E"), (.5, base), (1, "#A8A29C")], 0, -50, 0, 44, user=True), "".join(inner), dark="#1E1A18", op=.38, w=5))
-    o.append(form(circ(46, -46, 22), rg([(0, "#F0C4BC"), (.7, "#D9A39C"), (1, "#9A7A74")], .45, .45, .55),
-                  glow(48, -44, 12, 14, "#C98880", .6) + glow(36, -58, 8, 6, "#FFFFFF", .5), dark="#3A2420", op=.4, w=4))
-    for (x, y) in ((70, 34), (-40, 38)):
-        o.append(form(ell(x, y + 10, 9, 4.5), "#E3B8B0", "", dark="#5A3430", op=.3, w=1.5))
+    ear = ell(60, -40, 17, 23, 14)
+    o.append(form(ear, lg([(0, "#B7A7A0"), (1, "#8E7E78")], 0, 0, 1, 1),
+                  glow(63, -38, 12, 16, "#E2A8A0", .9, rot=14) + glow(54, -54, 6, 5, "#FFFFFF", .35), dark="#3A2420", op=.4, w=4))
+    o.append(form(blob([(64, 36), (76, 40), (80, 48), (66, 49), (62, 44)]), "#E3B8B0", "", dark="#5A3430", op=.3, w=1.5))
+    o.append(form(blob([(-52, 38), (-30, 44), (-20, 49), (-50, 49)]), "#E3B8B0", "", dark="#5A3430", op=.3, w=1.5))
     o.append(eye(80, -10, 5.4, "#120C0A", lid="#120C0A", lidop=.2)
              + glow(107, 10, 4.5, 4, "#D98A88", 1, hard=.6)
              + '<g stroke="#4A4440" stroke-width=".6" fill="none" opacity=".7" stroke-linecap="round">'
@@ -771,6 +768,536 @@ def mouse_c():
             + dot_eyes(36, -30, 64, -30, 6)
             + blush(26, -12, 6, 4) + blush(74, -12, 6, 4)
             + S("M36,-12 L14,-16 M36,-8 L16,-4 M64,-12 L86,-16 M64,-8 L84,-4", "#FFFFFF", 2))
+
+
+# ================================================================ elephant (African, side view)
+@real
+def elephant():
+    rng = random.Random(131)
+    g, lite, deep = "#8F8C88", "#B2AFAA", "#5E5B58"
+    o = [ground(0, 91, 118, 8, .22)]
+    legf = lg([(0, "#77746F"), (1, "#68655F")])
+    for pts in ([(36, 10, 16), (38, 50, 14.5), (40, 86, 14)], [(-84, 10, 18), (-84, 50, 14.5), (-84, 86, 14)]):
+        o.append(form(tube(pts, caps=(True, False)), legf, dark="#1E1C1A", op=.45, w=5))
+    o.append(form(tube([(-100, -20, 2.4), (-106, 10, 2), (-108, 36, 1.8)]), "#6E6B66", "", dark="#000", op=.3, w=1)
+             + P(blob([(-108, 34), (-104, 46), (-110, 52), (-114, 44)]), "#2A2826"))
+    legn = lg([(0, g), (1, "#7E7B76")])
+    for pts in ([(56, 10, 17), (58, 50, 15.5), (60, 86, 15)], [(-64, 10, 20), (-66, 50, 16), (-66, 86, 15)]):
+        x = pts[-1][0]
+        wr = "".join(f"M{x - 13},{y}q13,3 26,0" for y in (30, 42, 54, 64))
+        o.append(form(tube(pts, caps=(True, False)), legn,
+                      f'<path d="{wr}" stroke="#4A4846" stroke-width="1" fill="none" opacity=".4"/>'
+                      + "".join(f'<path d="M{x - 13 + k * 9},86 a4.5,3.5 0 0 1 9,0" fill="#D8D2C6"/>' for k in range(3)),
+                      dark="#1E1C1A", op=.42, w=5))
+    body = blob([(-102, -8), (-98, -42), (-74, -64), (-34, -72), (6, -70), (40, -78), (70, -92), (96, -88), (112, -70), (118, -48),
+                 (112, -24), (98, -12), (82, -6), (68, 8), (56, 24), (20, 36), (-30, 36), (-72, 28), (-96, 12)])
+    inner = [glow(-10, 26, 100, 18, deep, .5),
+             glow(-20, -54, 80, 16, lite, .6),
+             glow(96, -72, 18, 12, lite, .45),
+             f'<path d="M-90,-20 q8,14 4,30 M-80,-30 q8,14 4,30 M60,-60 q10,-6 20,-4 M84,-30 q10,0 16,6" stroke="#4E4C4A" stroke-width="1.2" fill="none" opacity=".35"/>',
+             speckles(rng, 120, (-100, -76, 118, 36), "#5E5B58", (.4, .8), .35),
+             strokes(rng, 120, (-100, -76, 118, 36), lambda x, y: math.radians(90), ["#6E6B66", "#B2AFAA"], (3, 6), .7, .35, .1)]
+    o.append(form(body, lg([(0, lite), (.5, g), (1, "#7A7772")], 0, -92, 0, 36, user=True), "".join(inner), dark="#1A1816", op=.4, w=7))
+    # tusk then trunk
+    o.append(form(tube([(100, -18, 4.6), (112, -6, 3.8), (124, -6, 2.4)]), lg([(0, "#F6EEDC"), (1, "#CFC2A4")]), "", dark="#5A4A2A", op=.35, w=2))
+    tr = [(104, -50, 15), (114, -24, 12.5), (118, 6, 10.5), (116, 38, 9), (120, 62, 7.5), (128, 72, 5.5)]
+    rings = "".join(f"M{n_(x - math.cos(math.radians(a + 90)) * w)},{n_(y - math.sin(math.radians(a + 90)) * w)}"
+                    f"q{n_(math.cos(math.radians(a)) * 2)},{n_(math.sin(math.radians(a)) * 2)} {n_(math.cos(math.radians(a + 90)) * w * 2)},{n_(math.sin(math.radians(a + 90)) * w * 2)}"
+                    for x, y, a, w in (at(tr, t / 22) for t in range(3, 21)))
+    o.append(form(tube(tr), lg([(0, lite), (.6, g), (1, deep)], 0, 0, 1, 0),
+                  f'<path d="{rings}" stroke="#4E4C4A" stroke-width="1.2" fill="none" opacity=".45"/>', dark="#1A1816", op=.4, w=5))
+    ear = blob([(62, -86), (36, -94), (10, -80), (0, -48), (6, -10), (20, 20), (38, 32), (52, 18), (58, -16), (68, -52)])
+    o.append(form(ear, lg([(0, "#9C9893"), (.6, "#86837E"), (1, "#6E6B66")], 0, 0, 1, 1),
+                  glow(30, -36, 30, 46, "#A8A49E", .5)
+                  + '<path d="M50,-70 C30,-60 24,-30 30,0 M56,-40 C44,-24 40,0 44,18 M20,-70 C14,-50 14,-30 18,-10" stroke="#5A5854" stroke-width="1.3" fill="none" opacity=".4"/>',
+                  dark="#1A1816", op=.45, w=6))
+    o.append(eye(86, -58, 3.2, "#3A2A1E", rot=10, lid="#2A2624", lidop=.6)
+             + '<path d="M80,-64 q6,-4 12,-2" stroke="#4E4C4A" stroke-width="1" fill="none" opacity=".5"/>'
+             + '<path d="M98,-12 C102,-6 104,0 102,4" stroke="#3A3836" stroke-width="1.2" fill="none" opacity=".5"/>')
+    return "".join(o)
+
+
+@cartoon("elephant")
+def elephant_c():
+    g, d, e = "#9AA7B8", "#8090A4", "#F2A9B6"
+    return ("".join(f'<rect x="{x}" y="0" width="30" height="76" rx="14" fill="{d}"/>' for x in (-70, 34))
+            + "".join(f'<rect x="{x}" y="0" width="30" height="80" rx="14" fill="{g}"/>' for x in (-92, 12))
+            + S("M-96,-20 C-110,0 -110,20 -104,34", g, 5)
+            + P(rrect(-102, -60, 160, 92, 46), g)
+            + C(70, -50, 44, g)
+            + P(tube([(98, -40, 17), (110, -4, 14), (116, 28, 12), (128, 40, 10)]), g)
+            + P(blob([(48, -86), (16, -84), (0, -50), (8, -10), (34, 6), (54, -20), (60, -60)]), d)
+            + P(blob([(44, -74), (22, -72), (12, -48), (18, -20), (36, -10), (48, -34)]), e)
+            + dot_eye(84, -58, 6.5) + blush(90, -38, 7, 4.5)
+            + smile(84, -22, 12, 2.5, 3))
+
+
+# ================================================================ lion (male, standing)
+def ragged(cx, cy, rx, ry, k, amp, seed, rot=0):
+    rng = random.Random(seed)
+    pts = []
+    for i in range(k):
+        t = 2 * math.pi * i / k + math.radians(rot)
+        r = 1 + (amp if i % 2 else -amp * .3) * rng.uniform(.6, 1.2)
+        pts.append((cx + rx * r * math.cos(t), cy + ry * r * math.sin(t)))
+    return blob(pts)
+
+
+@real
+def lion():
+    rng = random.Random(141)
+    coat, lite = "#C99A5C", "#E2BE84"
+    o = [ground(0, 91, 112, 8, .2)]
+    legf = lg([(0, "#A87A44"), (1, "#B8935E")])
+    o.append(form(tube([(40, 10, 11), (42, 50, 8), (44, 84, 7.5)]), legf, dark="#3A2208", op=.42, w=4) + E(48, 85, 10, 4.5, "#B8935E"))
+    o.append(form(tube([(-80, 0, 15), (-88, 34, 10), (-96, 58, 6.5), (-92, 84, 7.5)]), legf, dark="#3A2208", op=.42, w=4) + E(-88, 85, 10, 4.5, "#B8935E"))
+    tl = [(-94, -26, 4), (-112, -4, 3.6), (-120, 30, 3.2), (-114, 58, 3)]
+    o.append(form(tube(tl), lg([(0, coat), (1, "#A87A44")]), "", dark="#3A2208", op=.35, w=2)
+             + form(ell(-112, 64, 7, 10, -10), lg([(0, "#5A3A1C"), (1, "#2A1A0C")]), "", dark="#000", op=.3, w=2))
+    legn = lg([(0, coat), (1, "#D8B07A")])
+    o.append(form(tube([(56, 10, 12.5), (58, 50, 9), (60, 84, 8.5)]), legn, dark="#3A2208", op=.4, w=4))
+    o.append(form(tube([(-62, 0, 17), (-70, 34, 11), (-78, 58, 7), (-74, 84, 8.5)]), legn, dark="#3A2208", op=.4, w=4))
+    for x in (64, -70):
+        o.append(form(blob([(x - 10, 80), (x + 8, 78), (x + 14, 86), (x + 10, 90), (x - 12, 90)]), "#D8B07A", "", dark="#3A2208", op=.35, w=2))
+    body = blob([(-96, -6), (-90, -34), (-66, -46), (-20, -44), (20, -50), (50, -62), (74, -40), (76, 0), (66, 22), (40, 28),
+                 (0, 30), (-40, 28), (-72, 20), (-90, 8)])
+    inner = [glow(-10, 24, 90, 14, "#8A6030", .5), glow(-30, -36, 70, 12, "#F0D49C", .6),
+             glow(-74, -10, 22, 24, lite, .5),
+             strokes(rng, 200, (-96, -50, 76, 30), lambda x, y: math.radians(180), ["#E2BE84", "#9A6E38"], (4, 7), .7, .3, .1)]
+    o.append(form(body, lg([(0, "#B88A4E"), (.5, coat), (1, "#D9B27A")], 0, -50, 0, 30, user=True), "".join(inner), dark="#3A2208", op=.38, w=6))
+    mane = ragged(64, -46, 50, 56, 30, .14, 7, rot=5)
+    o.append(form(mane, rg([(0, "#A86A2C"), (.6, "#7E4A1C"), (1, "#5A3212")], .6, .45, .6),
+                  strokes(random.Random(12), 240, (10, -106, 118, 14), lambda x, y: math.atan2(y + 46, x - 64), ["#C88A42", "#4A2A0E", "#E0A858"], (8, 14), 1.1, .45, .1),
+                  dark="#2A1406", op=.4, w=6))
+    o.append(form(blob([(76, -88), (72, -100), (82, -104), (90, -94)]), "#B88A4E", glow(80, -96, 4, 4, "#5A3A1C", .6), dark="#3A2208", op=.35, w=2))
+    head = blob([(78, -84), (100, -80), (116, -64), (126, -50), (128, -38), (122, -28), (108, -20), (94, -24), (82, -40), (76, -64)])
+    hin = (glow(116, -34, 14, 10, "#F2DDB4", .9) + glow(104, -22, 12, 6, "#F6EAD2", .9)
+           + glow(92, -70, 16, 8, "#E8C890", .6)
+           + strokes(random.Random(13), 60, (76, -86, 128, -20), lambda x, y: math.radians(200), ["#E2BE84", "#9A6E38"], (3, 5), .6, .3))
+    o.append(form(head, lg([(0, "#D2A666"), (1, "#B88A4E")], 0, 0, 1, 1), hin, dark="#3A2208", op=.35, w=4))
+    o.append('<path d="M128,-42 C126,-46 120,-47 117,-44 C118,-40 122,-38 125,-38 C127,-38 128,-40 128,-42Z" fill="#5A3428"/>'
+             '<path d="M122,-38 C121,-33 118,-30 112,-29" stroke="#4A2A1A" stroke-width="1.3" fill="none" opacity=".75"/>'
+             '<g fill="#5A3A20" opacity=".5"><circle cx="112" cy="-36" r=".8"/><circle cx="108" cy="-34" r=".8"/><circle cx="110" cy="-31" r=".8"/></g>'
+             + eye(100, -60, 3.4, "#B0781C", rot=-10, lidop=.6)
+             + '<path d="M93,-62 C98,-67 106,-66 110,-62" stroke="#4A2A1A" stroke-width="1.4" fill="none" opacity=".5"/>')
+    return "".join(o)
+
+
+@cartoon("lion")
+def lion_c():
+    c, m, d = "#F2B24E", "#C8701E", "#D9952E"
+    return ("".join(f'<rect x="{x}" y="0" width="20" height="80" rx="10" fill="{d}"/>' for x in (-58, 30))
+            + "".join(f'<rect x="{x}" y="0" width="20" height="82" rx="10" fill="{c}"/>' for x in (-78, 10))
+            + S("M-80,-10 C-110,0 -112,40 -100,52", c, 7) + C(-100, 56, 10, m)
+            + P(rrect(-90, -36, 130, 64, 32), c)
+            + P(cloud(46, -54, 56, 54, 14, 1.0, seed=8), m)
+            + C(46, -54, 40, c)
+            + C(16, -86, 10, c) + C(76, -86, 10, c) + C(16, -86, 5, d) + C(76, -86, 5, d)
+            + E(46, -38, 20, 14, "#FFE8BE")
+            + P("M38,-46 L54,-46 L46,-38Z", "#7A3E1E")
+            + S("M38,-32 Q42,-28 46,-34 Q50,-28 54,-32", INK, 3)
+            + dot_eyes(30, -60, 62, -60, 6.5)
+            + blush(20, -42, 7, 4.5) + blush(72, -42, 7, 4.5))
+
+
+# ================================================================ giraffe
+def giraffe_spots(rng, box, size, test, colors):
+    x0, y0, x1, y1 = box
+    out = []
+    row = 0
+    y = y0
+    while y < y1:
+        x = x0 + (row % 2) * size * .5
+        while x < x1:
+            cx, cy = x + rng.uniform(-.15, .15) * size, y + rng.uniform(-.15, .15) * size
+            if test(cx, cy):
+                r = size * .42
+                pts = [(cx + r * math.cos(t) * rng.uniform(.8, 1.15), cy + r * math.sin(t) * rng.uniform(.8, 1.15))
+                       for t in [i * math.pi / 3 + rng.uniform(-.2, .2) for i in range(6)]]
+                out.append(f'<path d="{blob(pts)}" fill="{rng.choice(colors)}"/>')
+            x += size
+        y += size * .86
+        row += 1
+    return "".join(out)
+
+
+@real
+def giraffe():
+    rng = random.Random(151)
+    cream = "#F2E0B6"
+    sp = ["#B4642A", "#A55A24", "#BE7034"]
+    o = [ground(-6, 91, 70, 6, .2)]
+    for pts in ([(14, -10, 9), (16, 40, 6), (18, 86, 5.5)], [(-56, -10, 11), (-60, 30, 7), (-66, 56, 5), (-64, 86, 5.5)]):
+        d = tube(pts)
+        o.append(form(d, lg([(0, "#E2CDA0"), (1, "#D2BC8E")]), giraffe_spots(rng, (-80, -20, 30, 70), 11, inside(d), ["#9A5222", "#8A4A1E"]), dark="#3A2208", op=.4, w=3)
+                 + E(pts[-1][0] + 1, 87, 7, 3, "#3A2E26"))
+    o.append(form(tube([(-70, -26, 2.4), (-76, 0, 2), (-78, 30, 1.8)]), "#C9A878", "", dark="#000", op=.3, w=1)
+             + P(blob([(-78, 26), (-72, 40), (-78, 48), (-84, 38)]), "#2A1E16"))
+    for pts in ([(30, -10, 10), (32, 40, 6.5), (34, 86, 6)], [(-40, -10, 12), (-44, 30, 7.5), (-50, 56, 5.5), (-48, 86, 6)]):
+        d = tube(pts)
+        o.append(form(d, lg([(0, cream), (1, "#E6D2A6")]), giraffe_spots(rng, (-70, -20, 44, 70), 11, inside(d), sp), dark="#3A2208", op=.38, w=3)
+                 + E(pts[-1][0] + 1, 87, 7.5, 3.2, "#3A2E26"))
+    body = blob([(-74, -20), (-66, -40), (-30, -48), (10, -60), (34, -66), (52, -60), (54, -30), (44, 0), (20, 10), (-20, 10), (-56, 4), (-72, -8)])
+    o.append(form(body, lg([(0, cream), (1, "#E2CC9C")]),
+                  giraffe_spots(rng, (-80, -72, 60, 14), 22, inside(body), sp) + glow(-10, 4, 70, 12, "#8A6A3A", .35) + glow(-20, -40, 50, 10, "#FFF6E0", .4),
+                  dark="#3A2208", op=.38, w=5))
+    neck = tube([(32, -40, 21), (46, -96, 14), (56, -150, 10.5), (62, -176, 9.5)])
+    o.append(form(neck, lg([(0, cream), (1, "#E2CC9C")], 0, 0, 1, 0),
+                  giraffe_spots(rng, (0, -190, 80, -30), 14, inside(neck), sp) + glow(58, -110, 8, 50, "#8A6A3A", .25, rot=12),
+                  dark="#3A2208", op=.38, w=4))
+    mane = tube([(14, -52, 4), (30, -110, 4), (44, -160, 3.5), (52, -182, 3)])
+    o.append(form(mane, lg([(0, "#8A4A1E"), (1, "#5A2E12")]), "", dark="#000", op=.3, w=2))
+    for x0 in (56, 64):
+        o.append(form(tube([(x0, -188, 2.6), (x0 - 2, -202, 2.2)]), "#C9A06A", "", dark="#3A2208", op=.3, w=1.5) + C(x0 - 2, -204, 3.6, "#3A2416"))
+    o.append(form(blob([(52, -186), (40, -194), (34, -190), (44, -182)]), "#E0C898", "", dark="#3A2208", op=.4, w=2))
+    head = blob([(52, -188), (66, -194), (80, -188), (96, -176), (104, -166), (102, -158), (92, -156), (76, -162), (60, -168), (52, -176)])
+    o.append(form(head, lg([(0, "#F4E4BE"), (1, "#D9C08C")], 0, 0, 1, 1),
+                  glow(98, -164, 10, 8, "#B88A5A", .5) + glow(66, -180, 9, 7, "#C07A3A", .45), dark="#3A2208", op=.35, w=3))
+    o.append(eye(72, -180, 3.4, "#2A1A10", rot=15, lidop=.6)
+             + '<path d="M70,-185 l-2,-4 M73,-185.5 l-1,-4 M76,-185 l0,-4" stroke="#2A1A10" stroke-width=".8" opacity=".6"/>'
+             + '<path d="M100,-168 C102,-170 104,-168 103,-166" stroke="#3A2A1A" stroke-width="1.2" fill="none"/>'
+             + '<path d="M103,-159 C99,-157 95,-157 92,-158" stroke="#3A2A1A" stroke-width="1" fill="none" opacity=".6"/>')
+    return "".join(o)
+
+
+@cartoon("giraffe")
+def giraffe_c():
+    y, sp, d = "#FFCB4D", "#D9822B", "#EDB43C"
+    spots = "".join(C(x, yy, r, sp) for x, yy, r in ((-40, -16, 10), (-12, -24, 9), (16, -14, 8), (-26, 4, 7), (40, -60, 7), (50, -100, 6), (58, -136, 5)))
+    return ("".join(f'<rect x="{x}" y="-6" width="16" height="92" rx="8" fill="{d}"/>' for x in (-44, 26))
+            + "".join(f'<rect x="{x}" y="-6" width="16" height="94" rx="8" fill="{y}"/>' for x in (-62, 8))
+            + S("M-64,-20 L-76,16", y, 5) + C(-77, 20, 6, "#8A4A1E")
+            + P(rrect(-70, -40, 100, 50, 25), y)
+            + P(tube([(14, -30, 18), (40, -100, 14), (56, -150, 13)]), y)
+            + S("M20,-50 L44,-130", "#C8701E", 7)
+            + S("M50,-176 L48,-196 M68,-176 L72,-196", d, 6) + C(48, -198, 6, "#8A4A1E") + C(72, -198, 6, "#8A4A1E")
+            + P(tube([(58, -164, 20), (90, -150, 15)]), y)
+            + spots
+            + dot_eye(66, -168, 6) + smile(90, -144, 10, 2, 3) + blush(76, -150, 6, 4)
+            + C(98, -156, 2.4, "#8A4A1E"))
+
+
+# ================================================================ zebra
+HORSEISH = [(126, -64), (122, -56), (114, -52), (104, -58), (94, -64), (86, -66), (82, -56), (74, -36), (70, -12), (64, 12),
+            (40, 22), (0, 24), (-40, 20), (-72, 14), (-94, -4), (-100, -24), (-90, -42), (-60, -46), (-20, -40), (14, -44),
+            (34, -56), (52, -80), (70, -100), (86, -112), (100, -102), (114, -86), (124, -74)]
+
+
+def stripes_v(x0, x1, step, y0, y1, bend, rng, wmin=3, wmax=6):
+    out = []
+    x = x0
+    while x < x1:
+        w = rng.uniform(wmin, wmax)
+        out.append(f"M{n_(x)},{y0}C{n_(x + bend)},{n_((y0 * 2 + y1) / 3)} {n_(x - bend * .5)},{n_((y0 + y1 * 2) / 3)} {n_(x + bend * .3)},{y1}")
+        out.append(w)
+        x += step * rng.uniform(.85, 1.15)
+    return out
+
+
+@real
+def zebra():
+    rng = random.Random(161)
+    wht, blk = "#F4F2EE", "#1E1C1C"
+    o = [ground(0, 91, 110, 7, .2)]
+
+    def leg(pts, fill):
+        d = tube(pts[:-1] + [(pts[-1][0], pts[-1][1] - 4, pts[-1][2])])
+        bands = "".join(f"M{pts[0][0] - 24},{y}l48,{rng.uniform(-2, 2):.1f}" for y in range(12, 78, 8))
+        return (form(d, fill, f'<path d="{bands}" stroke="{blk}" stroke-width="3.4" fill="none"/>', dark="#000", op=.35, w=4)
+                + form(f"M{n_(pts[-1][0] - 7)},{n_(pts[-1][1] - 6)} L{n_(pts[-1][0] + 7)},{n_(pts[-1][1] - 6)} L{n_(pts[-1][0] + 9)},{n_(pts[-1][1] + 3)} L{n_(pts[-1][0] - 8)},{n_(pts[-1][1] + 3)}Z",
+                       "#2A2624", "", dark="#000", op=.3, w=2))
+    o.append(leg([(44, 8, 11), (46, 36, 7.5), (46, 58, 5.2), (46, 76, 5.6), (47, 86, 6.2)], "#D8D4CE"))
+    o.append(leg([(-72, 0, 14), (-80, 28, 10), (-90, 50, 6.2), (-86, 70, 5.4), (-84, 86, 6.2)], "#D8D4CE"))
+    tl = [(-96, -34, 3.4), (-108, -10, 3), (-112, 24, 2.6)]
+    o.append(form(tube(tl), "#E0DCD6", '<path d="M-110,-20 l8,2 M-112,-8 l8,2 M-114,4 l8,2" stroke="#1E1C1C" stroke-width="3"/>', dark="#000", op=.3, w=2)
+             + form(blob([(-112, 18), (-104, 30), (-108, 54), (-114, 58), (-118, 40)]), blk, "", dark="#000", op=.3, w=2))
+    o.append(leg([(58, 8, 12), (60, 36, 8), (60, 58, 5.4), (60, 76, 5.8), (61, 86, 6.4)], wht))
+    o.append(leg([(-58, 0, 16), (-64, 28, 11), (-74, 50, 6.4), (-70, 70, 5.4), (-68, 86, 6.4)], wht))
+    body = blob(HORSEISH)
+    st = []
+    # torso: upright bands that lean a little forward and thin out at the belly
+    x = -46
+    while x < 62:
+        w = rng.uniform(5.2, 7.2)
+        st.append(f'<path d="M{n_(x)},-50 C{n_(x + 3)},-22 {n_(x + 6)},0 {n_(x + 3)},30" stroke-width="{w:.1f}"/>')
+        x += rng.uniform(12.5, 14.5)
+    # rump: arcs around the hip, then level bands on the back of the thigh
+    for k, r in enumerate((24, 37, 50, 63)):
+        a0, a1 = math.radians(-95), math.radians(-190)
+        cx, cy = -58, 14
+        st.append(f'<path d="M{n_(cx + r * math.cos(a0))},{n_(cy + r * math.sin(a0))} A{r},{r} 0 0 0 {n_(cx + r * math.cos(a1))},{n_(cy + r * math.sin(a1))}" '
+                  f'stroke-width="{rng.uniform(5, 6.4):.1f}"/>')
+    # neck: bands across the neck, square to it, running up into the mane
+    ax, ay = math.cos(math.radians(-58)), math.sin(math.radians(-58))
+    px, py = math.cos(math.radians(32)), math.sin(math.radians(32))
+    for k in range(2, 9):
+        cx, cy = 50 + ax * (k * 12 - 6), -36 + ay * (k * 12 - 6)
+        st.append(f'<path d="M{n_(cx - px * 36)},{n_(cy - py * 36)} L{n_(cx + px * 26)},{n_(cy + py * 26)}" stroke-width="{rng.uniform(5, 6.4):.1f}"/>')
+    # face: thin bands
+    for k in range(6):
+        st.append(f'<path d="M{90 + k * 5.5},-104 C{96 + k * 5},-92 {100 + k * 4},-80 {98 + k * 4},-70" stroke-width="2.6"/>')
+    inner = [f'<g stroke="{blk}" fill="none" stroke-linecap="round">{"".join(st)}</g>',
+             glow(116, -62, 16, 14, blk, 1, hard=.6),
+             glow(-10, 14, 100, 14, "#6E6A64", .35), glow(-20, -34, 80, 12, "#FFFFFF", .35)]
+    o.append(form(body, wht, "".join(inner), dark="#1A1816", op=.42, w=6))
+    mane = blob([(86, -116), (68, -106), (50, -84), (34, -60), (22, -46), (32, -42), (48, -58), (64, -80), (80, -98), (94, -108)])
+    mst = "".join(f"M{x},{y}l{-6},{-10}" for x, y in ((80, -104), (72, -96), (64, -86), (56, -76), (48, -66), (40, -56), (32, -48)))
+    o.append(form(mane, wht, f'<path d="{mst}" stroke="{blk}" stroke-width="5" stroke-linecap="round"/>', dark="#000", op=.35, w=3))
+    o.append(form(blob([(84, -110), (82, -126), (86, -134), (92, -124), (92, -110)]), wht, glow(88, -120, 3, 6, "#6E6A64", .5), dark="#000", op=.4, w=2))
+    o.append(eye(101, -86, 3.6, "#2A1A10", rot=20, lidop=.6)
+             + '<path d="M118,-64 C121,-66 123,-62 121,-60" stroke="#B0A8A0" stroke-width="1.4" fill="none" stroke-linecap="round"/>')
+    return "".join(o)
+
+
+@cartoon("zebra")
+def zebra_c():
+    w, b, g = "#FFFFFF", "#26242A", "#D8D6E0"
+    body = rrect(-92, -40, 136, 60, 30)
+    neck = tube([(20, -20, 20), (44, -66, 17), (60, -96, 15)])
+    head = tube([(60, -100, 22), (92, -70, 15)])
+    sil = P(body, g) + P(neck, g) + P(head, g)
+    legs = ("".join(f'<rect x="{x}" y="0" width="18" height="84" rx="9" fill="{g}"/>' for x in (-60, 34))
+            + "".join(f'<rect x="{x}" y="0" width="18" height="86" rx="9" fill="{w}"/>' for x in (-78, 16)))
+    legst = "".join(f'<rect x="{x}" y="{y}" width="18" height="7" fill="{b}"/>' for x in (-78, 16, -60, 34) for y in (24, 40, 56))
+    bst = "".join(f'<rect x="{x}" y="-50" width="10" height="80" rx="5" fill="{b}"/>' for x in (-72, -48, -24, 0, 22))
+    nst = "".join(f'<rect x="-10" y="{y}" width="110" height="9" fill="{b}" transform="rotate(32 40 {y})"/>' for y in (-104, -86, -68, -50))
+    hst = "".join(f'<rect x="{x}" y="-120" width="6" height="40" fill="{b}" transform="rotate(-40 {x} -100)"/>' for x in (70, 84))
+    return (legs + legst
+            + "".join(f'<rect x="{x}" y="74" width="18" height="12" rx="4" fill="{b}"/>' for x in (-78, 16, -60, 34))
+            + S("M-84,-26 C-104,-14 -106,10 -100,26", g, 5) + E(-100, 32, 7, 10, b)
+            + f'<g transform="translate(3 4)">{sil}</g>'
+            + P(body, w) + K.clipped(body, bst)
+            + P(neck, w) + K.clipped(neck, nst)
+            + P(head, w) + K.clipped(head, hst)
+            + E(94, -68, 14, 13, "#4A4652")
+            + P(blob([(38, -120), (56, -116), (40, -86), (24, -58), (10, -36), (6, -54), (22, -86)]), b)
+            + P(tube([(48, -112, 7), (46, -128, 2)]), w)
+            + C(100, -70, 2.6, "#9A98A6")
+            + dot_eye(66, -94, 6.5)
+            + smile(86, -52, 10, 2, 3)
+            + blush(72, -78, 7, 4.5))
+
+
+# ================================================================ monkey (Formosan macaque, sitting)
+@real
+def monkey():
+    rng = random.Random(171)
+    fur, lite, dark_, face = "#7E7060", "#A8987E", "#4E443A", "#D9A68E"
+    o = [ground(-10, 89, 96, 7, .2)]
+
+    def flow_down(x, y):
+        return math.radians(100)
+    tl = [(-46, 74, 6), (-80, 82, 5.4), (-110, 74, 4.6), (-122, 50, 4), (-116, 28, 3.4)]
+    o.append(form(tube(tl), lg([(0, fur), (1, dark_)]), strokes(random.Random(2), 60, (-126, 24, -40, 90), lambda x, y: math.radians(200), [lite, dark_], (3, 5), .6, .35), dark="#1A140E", op=.4, w=3))
+    # far arm behind
+    o.append(form(tube([(26, -36, 9), (46, -4, 7.5), (62, 26, 6.5), (68, 44, 6)]), lg([(0, "#5E5244"), (1, "#4A4034")]), "", dark="#1A140E", op=.4, w=3))
+    body = blob([(20, -58), (-6, -56), (-30, -38), (-48, -4), (-56, 34), (-50, 66), (-30, 84), (10, 88), (40, 86), (54, 70),
+                 (50, 40), (40, 10), (36, -20), (34, -44)])
+    inner = [glow(-20, 20, 30, 50, dark_, .45), glow(20, 20, 26, 40, lite, .4),
+             strokes(rng, 260, (-58, -60, 56, 90), flow_down, [lite, dark_, "#C8B89E"], (4, 7), .75, .35, .1)]
+    o.append(form(body, lg([(0, "#8A7C6A"), (1, "#6E6252")], 0, 0, 1, 1), "".join(inner), dark="#1A140E", op=.4, w=6))
+    # folded leg: thigh to knee, shin down to the foot
+    thigh = tube([(-20, 56, 20), (20, 46, 17), (44, 44, 14)])
+    o.append(form(thigh, lg([(0, "#8A7C6A"), (1, "#74685A")]), strokes(rng, 80, (-40, 28, 60, 66), lambda x, y: math.radians(0), [lite, dark_], (4, 6), .7, .35), dark="#1A140E", op=.4, w=5))
+    o.append(form(tube([(46, 46, 11), (52, 70, 8), (56, 82, 7)]), lg([(0, "#7E7060"), (1, "#6A5E50")]), "", dark="#1A140E", op=.4, w=4))
+    o.append(form(blob([(44, 80), (66, 78), (80, 84), (78, 90), (46, 90)]), lg([(0, "#9A7C6C"), (1, "#7A5E50")]), "", dark="#1A140E", op=.35, w=2))
+    # near arm, hand on the knee
+    arm = tube([(18, -40, 11), (34, -6, 9), (50, 22, 7.5), (60, 40, 7)])
+    o.append(form(arm, lg([(0, "#8E806E"), (1, "#74685A")], 0, 0, 1, 0), strokes(rng, 60, (8, -50, 70, 46), lambda x, y: math.radians(62), [lite, dark_], (4, 6), .6, .35), dark="#1A140E", op=.4, w=4))
+    o.append(form(blob([(54, 36), (68, 38), (78, 46), (74, 52), (60, 50)]), lg([(0, "#B08A78"), (1, "#8A6858")]), '<path d="M64,48 l8,2 M64,45 l10,1" stroke="#5A4034" stroke-width=".8" opacity=".6"/>', dark="#3A2018", op=.35, w=2))
+    # head: round furry head, pink-tan face with the muzzle, small ear
+    head = ragged(36, -78, 34, 32, 26, .05, 3)
+    o.append(form(head, lg([(0, "#9A8A74"), (1, "#6E6252")], 0, 0, 1, 1),
+                  strokes(random.Random(14), 120, (0, -112, 72, -44), lambda x, y: math.atan2(y + 78, x - 36), [lite, dark_, "#C8B89E"], (3, 6), .7, .4),
+                  dark="#1A140E", op=.4, w=5))
+    o.append(form(ell(18, -78, 7, 9), lg([(0, "#C49480"), (1, "#9A6E5E")]), glow(19, -77, 3, 5, "#7A5044", .6), dark="#3A2018", op=.35, w=2))
+    facep = blob([(40, -96), (56, -100), (68, -90), (72, -76), (80, -66), (80, -56), (70, -50), (54, -52), (42, -62), (36, -80)])
+    o.append(form(facep, rg([(0, "#E8BAA2"), (.7, face), (1, "#B8846E")], .5, .45, .6),
+                  glow(54, -84, 14, 8, "#A87060", .5) + glow(76, -60, 8, 7, "#E8C0AA", .6), dark="#5A3020", op=.35, w=4))
+    o.append('<path d="M44,-92 C52,-98 64,-98 70,-90" stroke="#5A4434" stroke-width="3" fill="none" opacity=".55" stroke-linecap="round"/>')
+    o.append(eye(52, -82, 3.6, "#6A3E1E", lid="#3A2218", lidop=.6) + eye(66, -82, 2.8, "#6A3E1E", lid="#3A2218", lidop=.6)
+             + '<path d="M76,-64 l2,-2 M72,-64 l1,-2" stroke="#5A3028" stroke-width="1.4" stroke-linecap="round"/>'
+             + '<path d="M80,-56 C74,-54 66,-54 60,-56" stroke="#6A3A2E" stroke-width="1.3" fill="none" stroke-linecap="round" opacity=".8"/>')
+    return "".join(o)
+
+
+@cartoon("monkey")
+def monkey_c():
+    c, d, f = "#9A7452", "#7E5C3E", "#F5D2B0"
+    return (S("M-40,60 C-100,70 -110,10 -80,0 C-62,-6 -60,20 -76,22", c, 10)
+            + E(-6, 30, 50, 54, c)
+            + E(0, 38, 30, 36, f)
+            + S("M-40,10 C-60,40 -40,70 -20,70 M40,10 C60,40 40,70 20,70", d, 16)
+            + E(-28, 84, 20, 9, d) + E(28, 84, 20, 9, d)
+            + C(-48, -56, 18, c) + C(48, -56, 18, c) + C(-48, -56, 10, f) + C(48, -56, 10, f)
+            + C(0, -58, 46, c)
+            + P(blob([(-30, -78), (-12, -84), (0, -74), (12, -84), (30, -78), (34, -50), (22, -26), (0, -20), (-22, -26), (-34, -50)]), f)
+            + dot_eyes(-15, -60, 15, -60, 6.5)
+            + E(-4, -44, 2.4, 2, "#8A5A3A") + E(4, -44, 2.4, 2, "#8A5A3A")
+            + smile(0, -34, 16, 4, 3)
+            + blush(-24, -40, 6, 4) + blush(24, -40, 6, 4))
+
+
+# ================================================================ bear (brown bear, walking)
+@real
+def bear():
+    rng = random.Random(181)
+    fur, lite, dark_ = "#7A5232", "#A8784C", "#4A3020"
+    o = [ground(0, 91, 116, 8, .22)]
+    legf = lg([(0, "#5E3E26"), (1, "#4E3420")])
+    o.append(form(tube([(36, 10, 15), (40, 50, 13), (42, 82, 12.5)]), legf, dark="#1A0E06", op=.42, w=5))
+    o.append(form(tube([(-84, 10, 18), (-88, 50, 13), (-86, 82, 12.5)]), legf, dark="#1A0E06", op=.42, w=5))
+    legn = lg([(0, fur), (1, "#664430")])
+    for x0, pts in ((56, [(54, 10, 17), (58, 50, 14), (60, 82, 13.5)]), (-66, [(-64, 10, 20), (-70, 50, 14.5), (-68, 82, 13.5)])):
+        o.append(form(tube(pts), legn, strokes(rng, 50, (x0 - 24, 0, x0 + 24, 90), lambda x, y: math.radians(95), [lite, dark_], (4, 7), .7, .35), dark="#1A0E06", op=.42, w=5))
+        x = pts[-1][0]
+        o.append(form(blob([(x - 15, 82), (x + 14, 80), (x + 20, 88), (x + 14, 92), (x - 15, 92)]), lg([(0, "#5E3E26"), (1, "#3E2818")]), "", dark="#000", op=.3, w=2)
+                 + "".join(f'<path d="M{x + 12 + k * 3},{86 + k * 1.5} q5,0 7,3" stroke="#D8CDBA" stroke-width="1.6" fill="none" stroke-linecap="round"/>' for k in range(3)))
+    body = blob([(-104, -8), (-98, -42), (-70, -58), (-30, -60), (6, -68), (30, -78), (54, -74), (72, -64), (84, -66), (96, -62),
+                 (106, -52), (118, -40), (127, -33), (128, -24), (120, -18), (106, -14), (92, -14), (80, -8), (72, 8), (62, 26),
+                 (30, 32), (-20, 34), (-62, 28), (-92, 14)])
+
+    def flow(x, y):
+        if x > 80:
+            return math.radians(200)
+        return math.radians(110 + (x + 100) * .25) if y > -30 else math.radians(160)
+    inner = [glow(-10, 24, 100, 16, dark_, .5), glow(10, -60, 50, 14, "#C8946A", .55),
+             glow(-74, -10, 26, 30, lite, .45), glow(110, -30, 16, 8, "#9A6E4A", .6),
+             strokes(rng, 360, (-104, -80, 128, 34), flow, [lite, dark_, "#C8946A", "#5E3E26"], (5, 9), .9, .32, .15)]
+    o.append(form(body, lg([(0, "#8A5E3A"), (.5, fur), (1, "#6A4628")], 0, -80, 0, 34, user=True), "".join(inner), dark="#1A0E06", op=.42, w=7))
+    for (cx, cy, r, c) in ((92, -64, 8, "#5E3E26"), (80, -66, 10, fur)):
+        o.append(form(circ(cx, cy, r), c, glow(cx + 1, cy + 1, r * .5, r * .5, "#3A2414", .6), dark="#1A0E06", op=.35, w=2.5))
+    o.append('<path d="M128,-30 C128,-35 123,-37 119,-35 C118,-31 120,-27 124,-26 C127,-26 128,-28 128,-30Z" fill="#1A1210"/>'
+             + glow(123, -34, 2.5, 1.5, "#FFFFFF", .5)
+             + '<path d="M120,-24 C116,-19 110,-18 104,-19" stroke="#2A1A10" stroke-width="1.2" fill="none" opacity=".7"/>'
+             + eye(102, -48, 2.8, "#2A1810", rot=-10, lid="#1A1008", lidop=.4))
+    return "".join(o)
+
+
+@cartoon("bear")
+def bear_c():
+    c, d, f = "#A8703E", "#8C5A30", "#F2D2A8"
+    return ("".join(f'<rect x="{x}" y="0" width="28" height="78" rx="14" fill="{d}"/>' for x in (-62, 30))
+            + "".join(f'<rect x="{x}" y="0" width="28" height="82" rx="14" fill="{c}"/>' for x in (-86, 8))
+            + P(rrect(-98, -48, 150, 80, 40), c)
+            + C(28, -96, 16, c) + C(92, -96, 16, c) + C(28, -96, 8, f) + C(92, -96, 8, f)
+            + C(60, -60, 44, c)
+            + E(60, -40, 22, 16, f)
+            + E(60, -48, 9, 6.5, INK)
+            + smile(60, -36, 12, 3, 3)
+            + dot_eyes(44, -68, 76, -68, 6.5)
+            + blush(30, -50, 7, 4.5) + blush(90, -50, 7, 4.5))
+
+
+# ================================================================ turtle (red-eared slider)
+@real
+def turtle():
+    rng = random.Random(191)
+    o = [ground(0, 66, 104, 7, .22)]
+    skin = lg([(0, "#6E7A3E"), (1, "#4A5428")])
+    stripes = '<path d="M-20,-4 l40,-2 M-20,3 l40,0 M-20,10 l40,2" stroke="#E8D460" stroke-width="1.6" opacity=".8"/>'
+    o.append(form(tube([(-50, 34, 10), (-62, 50, 9), (-70, 62, 8)]), skin, "", dark="#1A1E0A", op=.4, w=3))
+    o.append(form(tube([(40, 34, 10), (50, 50, 9), (56, 62, 8)]), skin, "", dark="#1A1E0A", op=.4, w=3))
+    o.append(form(tube([(-80, 26, 6), (-96, 34, 3.5), (-104, 40, 1.5)]), skin, "", dark="#1A1E0A", op=.4, w=2))
+    # neck and head
+    neck = tube([(70, 18, 13), (92, 6, 11.5), (104, -2, 11)])
+    o.append(form(neck, lg([(0, "#7A8644"), (1, "#56602E")]),
+                  '<path d="M70,12 C84,4 96,-4 108,-8 M72,20 C86,12 98,6 110,2 M74,28 C88,20 100,14 112,10" stroke="#E8D460" stroke-width="2" fill="none" opacity=".85"/>',
+                  dark="#1A1E0A", op=.4, w=4))
+    head = blob([(96, -14), (110, -20), (126, -18), (136, -10), (136, 0), (128, 8), (112, 10), (98, 6)])
+    o.append(form(head, lg([(0, "#86924C"), (1, "#5A6430")], 0, 0, 1, 1),
+                  '<path d="M100,-10 C110,-14 122,-14 134,-8 M100,0 C112,-2 122,-2 132,2" stroke="#E8D460" stroke-width="1.8" fill="none" opacity=".85"/>'
+                  + glow(110, -2, 9, 5, "#D8382A", 1, hard=.6),
+                  dark="#1A1E0A", op=.4, w=3))
+    o.append(eye(122, -10, 2.8, "#C9A020", lid="#1A1E0A", lidop=.5)
+             + '<path d="M136,0 C132,3 126,4 120,3" stroke="#2A2E14" stroke-width="1.1" fill="none" opacity=".7"/>')
+    # shell
+    shell = "M-92,32 C-92,-8 -60,-50 -4,-52 C52,-54 86,-18 90,32 C40,40 -40,40 -92,32Z"
+    sc = ("M-4,-52 L-6,-20 M-50,-38 L-40,-12 L-6,-20 L30,-14 L46,-36 M-40,-12 L-60,18 M30,-14 L52,18 M-6,-20 L-8,18 "
+          "M-76,-6 L-60,18 L-8,18 L52,18 L76,8")
+    marg = "".join(f"M{x},{18 + abs(x) * .02:.1f}L{x - 3},{34}" for x in range(-84, 88, 14))
+    inner = [glow(-20, -36, 60, 16, "#9AA45A", .6), glow(30, 20, 70, 14, "#2A3214", .45),
+             f'<path d="{sc}" stroke="#E2D27A" stroke-width="2.6" fill="none" opacity=".55" stroke-linejoin="round"/>',
+             f'<path d="{sc}" stroke="#2A3012" stroke-width="1.2" fill="none" opacity=".6" stroke-linejoin="round"/>',
+             f'<path d="{marg}" stroke="#2A3012" stroke-width="1.2" opacity=".6"/>',
+             '<path d="M-90,22 C-40,28 40,28 88,20" stroke="#E2D27A" stroke-width="2" fill="none" opacity=".6"/>',
+             strokes(rng, 140, (-92, -52, 90, 34), lambda x, y: math.radians(rng.uniform(0, 180)), ["#C8C470", "#2A3012"], (2, 5), .8, .3, .4)]
+    o.append(form(shell, lg([(0, "#76843E"), (.5, "#5C6A30"), (1, "#3E4A20")], 0, 0, 0, 1), "".join(inner), dark="#141808", op=.42, w=7))
+    o.append(form("M-90,30 C-40,38 40,38 90,30 L88,38 C40,46 -40,46 -88,38Z", lg([(0, "#D8C878"), (1, "#A89848")]), "", dark="#3A3010", op=.35, w=2))
+    o.append(form(tube([(-40, 34, 11), (-48, 50, 10), (-54, 62, 9)]), lg([(0, "#7A8644"), (1, "#56602E")]), stripes.replace("-20,", "-60,"), dark="#1A1E0A", op=.4, w=3))
+    o.append(form(tube([(52, 32, 11), (64, 48, 10), (72, 60, 9)]), lg([(0, "#7A8644"), (1, "#56602E")]), "", dark="#1A1E0A", op=.4, w=3))
+    o.append('<path d="M66,64 l5,4 M72,62 l6,3 M78,60 l6,2 M-60,64 l-4,4 M-54,65 l-2,4 M-48,64 l0,4" stroke="#2A2E14" stroke-width="1.6" stroke-linecap="round"/>')
+    return "".join(o)
+
+
+@cartoon("turtle")
+def turtle_c():
+    g, d, l, s_ = "#5DBB63", "#3E9A4A", "#A6DB6E", "#8FD07A"
+    shell = "M-90,30 C-90,-20 -50,-60 0,-60 C50,-60 90,-20 90,30Z"
+    hexes = "".join(P(blob([(x - 14, y), (x - 7, y - 12), (x + 7, y - 12), (x + 14, y), (x + 7, y + 12), (x - 7, y + 12)]), l)
+                    for x, y in ((-34, -24), (0, -36), (34, -24), (-50, 8), (-16, 6), (18, 6), (52, 8)))
+    return (E(-56, 40, 16, 14, s_) + E(56, 40, 16, 14, s_) + E(-30, 44, 14, 12, s_) + E(30, 44, 14, 12, s_)
+            + S("M-88,26 L-104,32", s_, 10)
+            + C(108, 0, 26, s_)
+            + P(tube([(80, 20, 14), (96, 10, 14)]), s_)
+            + P(shell, g) + K.clipped(shell, hexes)
+            + P(rrect(-96, 22, 192, 16, 8), d)
+            + dot_eye(114, -6, 6) + smile(118, 10, 12, 3, 3) + blush(102, 10, 6, 4))
+
+
+# ================================================================ frog (green pond frog, sitting)
+@real
+def frog():
+    rng = random.Random(201)
+    g, lite, dark_ = "#5FA83A", "#9CCF62", "#2E6A1E"
+    o = [ground(-4, 68, 96, 7, .22)]
+    skin = lg([(0, "#6CB444"), (1, "#3E8428")], 0, 0, 1, 1)
+    # far front arm, hind foot
+    o.append(form(tube([(70, 24, 6), (78, 44, 5), (82, 60, 4.5)]), lg([(0, "#4E9030"), (1, "#3A7024")]), "", dark="#0E2A06", op=.4, w=2))
+    body = blob([(-66, 38), (-60, 4), (-34, -22), (0, -38), (30, -48), (56, -52), (80, -46), (100, -32), (106, -22), (100, -14),
+                 (86, -8), (74, 4), (66, 24), (52, 40), (20, 52), (-20, 54), (-52, 50)])
+    inner = [softfill(blob([(104, -18), (90, -8), (76, 6), (66, 30), (50, 44), (20, 54), (10, 40), (40, 20), (66, -2), (88, -12)]), "#E6EAB0", .9, 3),
+             glow(10, -26, 60, 14, lite, .6), glow(-20, 30, 50, 20, dark_, .4),
+             speckles(rng, 26, (-60, -40, 80, 30), "#2A5A16", (1.6, 3.4), .45),
+             speckles(rng, 60, (-60, -48, 100, 40), "#C8E890", (.6, 1.2), .5),
+             '<path d="M-40,-14 C0,-36 40,-46 74,-48" stroke="#C8D870" stroke-width="2.4" fill="none" opacity=".55"/>',
+             '<path d="M100,-16 C92,-12 84,-10 74,-12" stroke="#1E3A10" stroke-width="1.6" fill="none" opacity=".7"/>']
+    o.append(form(body, lg([(0, "#78BC4C"), (.5, g), (1, "#4A8E2C")], 0, -52, 0, 54, user=True), "".join(inner), dark="#0E2A06", op=.4, w=6))
+    o.append(form(circ(36, -24, 8), rg([(0, "#8AB85A"), (1, "#4E8A30")]), "", dark="#0E2A06", op=.3, w=2))
+    # folded hind leg: thigh, shin, long webbed foot
+    thigh = blob([(-62, 10), (-30, 0), (10, 14), (24, 34), (10, 46), (-30, 46), (-58, 36)])
+    o.append(form(thigh, skin, speckles(rng, 10, (-60, 4, 20, 44), "#2A5A16", (1.6, 3), .45) + glow(-20, 14, 30, 8, lite, .5), dark="#0E2A06", op=.42, w=5))
+    shin = tube([(20, 38, 10), (-10, 50, 8.5), (-44, 56, 7)])
+    o.append(form(shin, lg([(0, "#5FA83A"), (1, "#3E8428")]), "", dark="#0E2A06", op=.42, w=4))
+    foot = blob([(-50, 60), (-20, 60), (10, 58), (34, 56), (40, 62), (30, 68), (-10, 68), (-48, 68)])
+    o.append(form(foot, lg([(0, "#6CB444"), (1, "#3E8428")]), '<path d="M0,62 L36,58 M0,64 L34,64 M-4,66 L28,68" stroke="#2E6A1E" stroke-width="1" opacity=".6"/>', dark="#0E2A06", op=.4, w=2))
+    # near front arm with spread fingers
+    o.append(form(tube([(60, 20, 7.5), (68, 42, 6), (72, 60, 5)]), skin, "", dark="#0E2A06", op=.4, w=3)
+             + S("M72,60 L64,68 M72,61 L74,69 M72,60 L82,66", "#4E9030", 4)
+             + "".join(C(x, y, 2.6, "#4E9030") for x, y in ((63, 69), (74, 70), (83, 67))))
+    # the bulging eye
+    o.append(form(circ(60, -50, 15), rg([(0, "#8CC860"), (1, "#3E8428")], .4, .3, .7), "", dark="#0E2A06", op=.4, w=3))
+    o.append(f'<circle cx="62" cy="-52" r="10.5" fill="{rg([(0, "#F2D060"), (.7, "#C8962A"), (1, "#7A5A14")])}"/>'
+             '<ellipse cx="62.5" cy="-52" rx="6.4" ry="3.6" fill="#120C06"/>'
+             '<circle cx="66" cy="-56" r="2.2" fill="#FFFFFF" opacity=".9"/>'
+             '<path d="M47,-50 C50,-62 66,-68 76,-56" stroke="#2E6A1E" stroke-width="2" fill="none" opacity=".5"/>'
+             '<g fill="#1E3A10"><circle cx="100" cy="-28" r="1.2"/></g>')
+    return "".join(o)
+
+
+@cartoon("frog")
+def frog_c():
+    g, d, l = "#5CC24A", "#45A436", "#C9EE8A"
+    return (E(-60, 70, 34, 16, d) + E(60, 70, 34, 16, d)
+            + E(0, 20, 76, 58, g)
+            + E(0, 40, 46, 34, l)
+            + S("M-30,40 L-36,74 M30,40 L36,74", g, 14)
+            + E(-40, 78, 14, 7, g) + E(40, 78, 14, 7, g)
+            + C(-36, -36, 26, g) + C(36, -36, 26, g)
+            + C(-36, -38, 16, "#FFFFFF") + C(36, -38, 16, "#FFFFFF")
+            + dot_eyes(-34, -38, 34, -38, 8)
+            + S("M-30,4 Q0,26 30,4", INK, 3.6)
+            + blush(-48, 2, 9, 5) + blush(48, 2, 9, 5))
 
 
 # ================================================================ cartoon cat, cow, duck
@@ -802,11 +1329,13 @@ def cow_c():
             + "".join(f'<rect x="{x}" y="10" width="22" height="74" rx="11" fill="{g}"/>' for x in (-70, 14))
             + "".join(f'<rect x="{x}" y="10" width="22" height="76" rx="11" fill="{w}"/>' for x in (-88, -4))
             + "".join(f'<rect x="{x}" y="74" width="22" height="12" rx="5" fill="{b}"/>' for x in (-88, -4, -70, 14))
+            + f'<g transform="translate(3 4)">{P(body, g)}</g>'
             + P(body, w)
             + K.clipped(body, E(-62, -36, 28, 22, b) + E(-6, 30, 26, 18, b) + E(-24, -40, 14, 10, b) + E(-100, 10, 14, 26, b))
             + E(-34, 40, 13, 8, pk)
             + E(26, -100, 9, 5, "#E8DCC0", 30) + E(94, -100, 9, 5, "#E8DCC0", -30)
             + E(14, -80, 20, 10, b, 20) + E(106, -80, 20, 10, b, -20)
+            + E(63, -62, 44, 42, g)
             + E(60, -66, 44, 42, w)
             + K.clipped(ell(60, -66, 44, 42), E(36, -94, 26, 22, b))
             + E(60, -36, 36, 22, pk)

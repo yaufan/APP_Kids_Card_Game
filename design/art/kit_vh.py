@@ -217,6 +217,14 @@ def shade(box, color="#000000", left=0.0, right=0.0, top=0.0, bottom=0.0, w=.22)
     return "".join(o)
 
 
+def pbox(d, pad=2):
+    """Bounding box of a path made of plain x,y pairs (as written by poly())."""
+    import re
+    v = [float(t) for t in re.findall(r"-?\d+\.?\d*", d)]
+    xs, ys = v[0::2], v[1::2]
+    return (min(xs) - pad, min(ys) - pad, max(xs) + pad, max(ys) + pad)
+
+
 def specks(box, op=.10, seed=5, tile=40, n=26, light="#FFFFFF", dark="#000000", r=(.35, .8)):
     """A little print texture over box: one tile of tiny dots repeated with <use>."""
     k = "t" + _h(seed, tile, n, light, dark, r)
@@ -422,11 +430,33 @@ def extrude(cam, outline, y0, y1, base, flat=False, top_fill=None):
         nrm = (nx, 0, nz)
         if cam.facing(nrm):
             q = [(ax, y0, az), (bx, y0, bz), (bx, y1, bz), (ax, y1, az)]
-            sides.append((-cam.depth((ax + bx) / 2, (y0 + y1) / 2, (az + bz) / 2), P(cam.poly(q), cam.tone(base, nrm, flat))))
-    o = [s for _, s in sorted(sides)]
+            col = dk(base, .14) if flat else cam.tone(base, nrm)      # flat: one colour all round
+            sides.append((-cam.depth((ax + bx) / 2, (y0 + y1) / 2, (az + bz) / 2), P(cam.poly(q), col)))
+    pts = [cam.p(x, y, z) for x, z in outline for y in (y0, y1)]
+    o = [P(poly(hull(pts)), dk(base, .14))]          # one piece under the strips: no seams
+    if not flat:
+        o += [s for _, s in sorted(sides)]
     top = cam.poly([(x, y1, z) for x, z in outline])
     o.append(P(top, top_fill or cam.tone(base, (0, 1, 0), flat)))
     return "".join(o), top
+
+
+def hull(pts):
+    """Convex hull (monotone chain) of 2D points."""
+    pts = sorted(set((round(x, 2), round(y, 2)) for x, y in pts))
+
+    def cross(o, a, b):
+        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+    lo, up = [], []
+    for p_ in pts:
+        while len(lo) >= 2 and cross(lo[-2], lo[-1], p_) <= 0:
+            lo.pop()
+        lo.append(p_)
+    for p_ in reversed(pts):
+        while len(up) >= 2 and cross(up[-2], up[-1], p_) <= 0:
+            up.pop()
+        up.append(p_)
+    return lo[:-1] + up[:-1]
 
 
 def round_rect_xz(x0, z0, x1, z1, r, n=6):
@@ -530,8 +560,9 @@ def sheet(out_png, decks=("vehicles", "home"), cols=5, big=170, small=120):
                          f'<div class="n">{names.get(cid, "")} · {cid}</div></div>')
     cw = big * 2 + 30
     html = ("<!doctype html><html><head><meta charset='utf-8'></head><body style='margin:0;background:#E9E4DB;"
-            f"font-family:sans-serif'><div style='display:grid;grid-template-columns:repeat({cols},{cw}px);gap:12px;padding:12px'>"
-            + "".join(cells).replace('class="c"', f'style="background:#fff;border-radius:16px;padding:8px;text-align:center"')
+            "font-family:sans-serif'>"
+            f"<div style='display:grid;grid-template-columns:repeat({cols},{cw}px);gap:12px;padding:12px'>"
+            + "".join(cells).replace('class="c"', 'style="background:#fff;border-radius:16px;padding:8px;text-align:center"')
             .replace('class="row"', 'style="display:flex;justify-content:center;gap:10px"')
             .replace('class="n"', 'style="font-size:16px;color:#444;margin-top:4px"')
             + "</div></body></html>")

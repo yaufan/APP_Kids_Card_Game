@@ -9,11 +9,10 @@ generic high-speed train, a yellow garbage truck, a white ambulance with a red c
 blue-and-white police car. No real company's logo, livery or lettering.
 """
 import math
-import random
 import sys
 
-from kit_vh import (C, D, E, L, P, R, band, blob, chrome, cheek, clip, dk, ell, eye, f1, glass, glow, ground, inside,
-                    lg, lt, mix, poly, rg, rrect, shade, smile, specks, spline, tyre, wheel_flat, write_deck)
+from kit_vh import (C, E, L, P, R, band, blob, chrome, cheek, dk, eye, f1, glass, glow, ground, inside, lg, lt, rg, rrect,
+                    shade, smile, specks, tyre, wheel_flat, write_deck)
 
 
 # ================================================================ realistic helpers
@@ -124,8 +123,7 @@ def car():
 def taxi_sign():
     """The lit roof sign with T-A-X-I drawn as strokes (a generic word, no company)."""
     o = [P("M-30,-60 L-27,-66 L27,-66 L30,-60Z", "#2A2C30"),
-         P(rrect(-30, -86, 60, 21, 5), lg([(0, "#FFFFFF"), (.6, "#F1EEE6"), (1, "#C9C3B4")])),
-         R(-30, -86, 60, 21, lg(band(0, 0, 1, 0, "#000000", .12, .5, .5)), 5, 'opacity=".0"')]
+         P(rrect(-30, -86, 60, 21, 5), lg([(0, "#FFFFFF"), (.6, "#F1EEE6"), (1, "#C9C3B4")]))]
     s = 2.6
     letters = ("M-21,-81 L-13,-81 M-17,-81 L-17,-70 "            # T
                "M-11,-70 L-7,-81 L-3,-70 M-9.5,-74 L-4.5,-74 "     # A
@@ -278,7 +276,6 @@ def train():
     """A steam locomotive: boiler, chimney with steam, cab, big red wheels, on rails."""
     o = [ground(0, 64, 175, 8, .25), rails(-175, 175, 60)]
     # steam puffs
-    rng = random.Random(4)
     for cx, cy, r, op in ((118, -120, 18, .9), (96, -146, 24, .85), (64, -164, 28, .75), (24, -172, 26, .6)):
         o.append(C(cx, cy, r, rg([(0, "#FFFFFF"), (.7, "#ECEFF2"), (1, "#C9D0D6")], cx=.38, cy=.35)))
         o.append(C(cx + r * .4, cy + r * .4, r * .55, "#B5BEC6", 'opacity=".35"'))
@@ -672,12 +669,7 @@ def hot_air_balloon():
     n = 9
     for i in range(n):
         t0, t1 = -1 + 2 * i / n, -1 + 2 * (i + 1) / n
-
-        def edge(t):
-            return f"M{f1(t * 22)},98 C{f1(t * 80)},40 {f1(t * 150)},-40 {f1(t * 128)},-110 C{f1(t * 110)},-160 {f1(t * 40)},-180 0,-180"
-        a = edge(t0)
-        b = edge(t1)
-        # region between two meridian curves
+        # one coloured panel: the region between two meridian curves
         d = (f"M{f1(t0 * 22)},98 C{f1(t0 * 80)},40 {f1(t0 * 150)},-40 {f1(t0 * 128)},-110 C{f1(t0 * 110)},-160 {f1(t0 * 40)},-180 0,-180 "
              f"C{f1(t1 * 40)},-180 {f1(t1 * 110)},-160 {f1(t1 * 128)},-110 C{f1(t1 * 150)},-40 {f1(t1 * 80)},40 {f1(t1 * 22)},98Z")
         gores.append(P(d, cols[i % len(cols)]))
@@ -896,7 +888,6 @@ def c_train():
     o.append(P("M104,-96 L106,-128 L128,-128 L130,-96Z", DARK) + P(rrect(98, -136, 38, 12, 6), DARK))
     o.append(P("M40,-92 C40,-114 72,-114 72,-92Z", YEL))
     o.append(C(128, -64, 12, "#FFE45C"))
-    o.append(smile(116, -48, 18, 6, 4) if False else "")
     o.append(R(-100, -38, 238, 12, DARK, 4))
     o.append(P("M134,-6 L172,50 L124,50Z", RED))
     for cx, r in ((-128, 30), (-56, 34), (16, 34), (100, 20)):
@@ -1103,7 +1094,7 @@ def c_rocket():
     o.append(P("M-44,40 C-72,60 -88,90 -90,128 Q-90,134 -84,132 L-44,104Z M44,40 C72,60 88,90 90,128 Q90,134 84,132 L44,104Z", RED))
     o.append(P("M0,-188 C30,-160 44,-110 44,-50 L44,104 L-44,104 L-44,-50 C-44,-110 -30,-160 0,-188Z", "#F4F7FA"))
     o.append(P("M0,-188 C22,-168 34,-138 39,-110 L-39,-110 C-34,-138 -22,-168 0,-188Z", RED))
-    o.append(R(-44, 78, 88, 12, RED) + R(-30, -98, 10, 150, WHITE, 5, 'opacity=".0"'))
+    o.append(R(-44, 78, 88, 12, RED))
     o.append(R(-34, -96, 9, 150, "#DCE3EA", 4.5))
     o.append(C(0, -40, 23, "#9AA5B1") + C(0, -40, 16, "#5BB8F0") + E(-6, -46, 5, 3.4, WHITE, 'opacity=".8"'))
     return "".join(o)
