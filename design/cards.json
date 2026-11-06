@@ -1,0 +1,766 @@
+{
+ "decks": [
+  {
+   "id": "animals",
+   "zh": "動物",
+   "en": "animals",
+   "cards": [
+    {
+     "id": "dog",
+     "zh": "小狗",
+     "en": "dog",
+     "says": "汪汪"
+    },
+    {
+     "id": "cat",
+     "zh": "小貓",
+     "en": "cat",
+     "says": "喵喵"
+    },
+    {
+     "id": "rabbit",
+     "zh": "兔子",
+     "en": "rabbit",
+     "says": ""
+    },
+    {
+     "id": "cow",
+     "zh": "牛",
+     "en": "cow",
+     "says": "哞～"
+    },
+    {
+     "id": "pig",
+     "zh": "豬",
+     "en": "pig",
+     "says": "齁齁"
+    },
+    {
+     "id": "sheep",
+     "zh": "羊",
+     "en": "sheep",
+     "says": "咩～"
+    },
+    {
+     "id": "horse",
+     "zh": "馬",
+     "en": "horse",
+     "says": ""
+    },
+    {
+     "id": "chicken",
+     "zh": "雞",
+     "en": "chicken",
+     "says": "咕咕"
+    },
+    {
+     "id": "duck",
+     "zh": "鴨子",
+     "en": "duck",
+     "says": "呱呱"
+    },
+    {
+     "id": "fish",
+     "zh": "魚",
+     "en": "fish",
+     "says": ""
+    },
+    {
+     "id": "bird",
+     "zh": "小鳥",
+     "en": "bird",
+     "says": "啾啾"
+    },
+    {
+     "id": "mouse",
+     "zh": "老鼠",
+     "en": "mouse",
+     "says": "吱吱"
+    },
+    {
+     "id": "elephant",
+     "zh": "大象",
+     "en": "elephant",
+     "says": ""
+    },
+    {
+     "id": "lion",
+     "zh": "獅子",
+     "en": "lion",
+     "says": "吼～"
+    },
+    {
+     "id": "giraffe",
+     "zh": "長頸鹿",
+     "en": "giraffe",
+     "says": ""
+    },
+    {
+     "id": "zebra",
+     "zh": "斑馬",
+     "en": "zebra",
+     "says": ""
+    },
+    {
+     "id": "monkey",
+     "zh": "猴子",
+     "en": "monkey",
+     "says": ""
+    },
+    {
+     "id": "bear",
+     "zh": "熊",
+     "en": "bear",
+     "says": ""
+    },
+    {
+     "id": "turtle",
+     "zh": "烏龜",
+     "en": "turtle",
+     "says": ""
+    },
+    {
+     "id": "frog",
+     "zh": "青蛙",
+     "en": "frog",
+     "says": "呱呱"
+    }
+   ]
+  },
+  {
+   "id": "fruits",
+   "zh": "水果",
+   "en": "fruits",
+   "cards": [
+    {
+     "id": "apple",
+     "zh": "蘋果",
+     "en": "apple",
+     "says": ""
+    },
+    {
+     "id": "banana",
+     "zh": "香蕉",
+     "en": "banana",
+     "says": ""
+    },
+    {
+     "id": "orange",
+     "zh": "橘子",
+     "en": "orange",
+     "says": ""
+    },
+    {
+     "id": "grapes",
+     "zh": "葡萄",
+     "en": "grapes",
+     "says": ""
+    },
+    {
+     "id": "strawberry",
+     "zh": "草莓",
+     "en": "strawberry",
+     "says": ""
+    },
+    {
+     "id": "watermelon",
+     "zh": "西瓜",
+     "en": "watermelon",
+     "says": ""
+    },
+    {
+     "id": "pineapple",
+     "zh": "鳳梨",
+     "en": "pineapple",
+     "says": ""
+    },
+    {
+     "id": "mango",
+     "zh": "芒果",
+     "en": "mango",
+     "says": ""
+    },
+    {
+     "id": "pear",
+     "zh": "梨子",
+     "en": "pear",
+     "says": ""
+    },
+    {
+     "id": "peach",
+     "zh": "桃子",
+     "en": "peach",
+     "says": ""
+    },
+    {
+     "id": "cherry",
+     "zh": "櫻桃",
+     "en": "cherry",
+     "says": ""
+    },
+    {
+     "id": "kiwi",
+     "zh": "奇異果",
+     "en": "kiwi",
+     "says": ""
+    },
+    {
+     "id": "lemon",
+     "zh": "檸檬",
+     "en": "lemon",
+     "says": ""
+    },
+    {
+     "id": "papaya",
+     "zh": "木瓜",
+     "en": "papaya",
+     "says": ""
+    },
+    {
+     "id": "guava",
+     "zh": "芭樂",
+     "en": "guava",
+     "says": ""
+    },
+    {
+     "id": "wax_apple",
+     "zh": "蓮霧",
+     "en": "wax apple",
+     "says": ""
+    },
+    {
+     "id": "lychee",
+     "zh": "荔枝",
+     "en": "lychee",
+     "says": ""
+    },
+    {
+     "id": "persimmon",
+     "zh": "柿子",
+     "en": "persimmon",
+     "says": ""
+    },
+    {
+     "id": "melon",
+     "zh": "哈密瓜",
+     "en": "melon",
+     "says": ""
+    },
+    {
+     "id": "blueberry",
+     "zh": "藍莓",
+     "en": "blueberry",
+     "says": ""
+    }
+   ]
+  },
+  {
+   "id": "vehicles",
+   "zh": "交通工具",
+   "en": "vehicles",
+   "cards": [
+    {
+     "id": "car",
+     "zh": "汽車",
+     "en": "car",
+     "says": "叭叭"
+    },
+    {
+     "id": "bus",
+     "zh": "公車",
+     "en": "bus",
+     "says": "叭～"
+    },
+    {
+     "id": "taxi",
+     "zh": "計程車",
+     "en": "taxi",
+     "says": ""
+    },
+    {
+     "id": "scooter",
+     "zh": "機車",
+     "en": "scooter",
+     "says": "噗噗"
+    },
+    {
+     "id": "bicycle",
+     "zh": "腳踏車",
+     "en": "bicycle",
+     "says": "鈴鈴"
+    },
+    {
+     "id": "train",
+     "zh": "火車",
+     "en": "train",
+     "says": "嘟嘟"
+    },
+    {
+     "id": "mrt",
+     "zh": "捷運",
+     "en": "metro",
+     "says": ""
+    },
+    {
+     "id": "hsr",
+     "zh": "高鐵",
+     "en": "high-speed train",
+     "says": ""
+    },
+    {
+     "id": "airplane",
+     "zh": "飛機",
+     "en": "airplane",
+     "says": ""
+    },
+    {
+     "id": "helicopter",
+     "zh": "直升機",
+     "en": "helicopter",
+     "says": ""
+    },
+    {
+     "id": "boat",
+     "zh": "船",
+     "en": "boat",
+     "says": "嗚～"
+    },
+    {
+     "id": "fire_truck",
+     "zh": "消防車",
+     "en": "fire truck",
+     "says": "喔咿喔咿"
+    },
+    {
+     "id": "ambulance",
+     "zh": "救護車",
+     "en": "ambulance",
+     "says": ""
+    },
+    {
+     "id": "police_car",
+     "zh": "警車",
+     "en": "police car",
+     "says": ""
+    },
+    {
+     "id": "garbage_truck",
+     "zh": "垃圾車",
+     "en": "garbage truck",
+     "says": ""
+    },
+    {
+     "id": "truck",
+     "zh": "卡車",
+     "en": "truck",
+     "says": ""
+    },
+    {
+     "id": "excavator",
+     "zh": "挖土機",
+     "en": "excavator",
+     "says": ""
+    },
+    {
+     "id": "hot_air_balloon",
+     "zh": "熱氣球",
+     "en": "hot air balloon",
+     "says": ""
+    },
+    {
+     "id": "rocket",
+     "zh": "火箭",
+     "en": "rocket",
+     "says": ""
+    },
+    {
+     "id": "stroller",
+     "zh": "嬰兒車",
+     "en": "stroller",
+     "says": ""
+    }
+   ]
+  },
+  {
+   "id": "body",
+   "zh": "身體",
+   "en": "body",
+   "cards": [
+    {
+     "id": "head",
+     "zh": "頭",
+     "en": "head",
+     "says": ""
+    },
+    {
+     "id": "hair",
+     "zh": "頭髮",
+     "en": "hair",
+     "says": ""
+    },
+    {
+     "id": "eye",
+     "zh": "眼睛",
+     "en": "eye",
+     "says": ""
+    },
+    {
+     "id": "ear",
+     "zh": "耳朵",
+     "en": "ear",
+     "says": ""
+    },
+    {
+     "id": "nose",
+     "zh": "鼻子",
+     "en": "nose",
+     "says": ""
+    },
+    {
+     "id": "mouth",
+     "zh": "嘴巴",
+     "en": "mouth",
+     "says": ""
+    },
+    {
+     "id": "teeth",
+     "zh": "牙齒",
+     "en": "teeth",
+     "says": ""
+    },
+    {
+     "id": "tongue",
+     "zh": "舌頭",
+     "en": "tongue",
+     "says": ""
+    },
+    {
+     "id": "face",
+     "zh": "臉",
+     "en": "face",
+     "says": ""
+    },
+    {
+     "id": "neck",
+     "zh": "脖子",
+     "en": "neck",
+     "says": ""
+    },
+    {
+     "id": "shoulder",
+     "zh": "肩膀",
+     "en": "shoulder",
+     "says": ""
+    },
+    {
+     "id": "hand",
+     "zh": "手",
+     "en": "hand",
+     "says": ""
+    },
+    {
+     "id": "finger",
+     "zh": "手指",
+     "en": "finger",
+     "says": ""
+    },
+    {
+     "id": "elbow",
+     "zh": "手肘",
+     "en": "elbow",
+     "says": ""
+    },
+    {
+     "id": "belly",
+     "zh": "肚子",
+     "en": "belly",
+     "says": ""
+    },
+    {
+     "id": "back",
+     "zh": "背",
+     "en": "back",
+     "says": ""
+    },
+    {
+     "id": "leg",
+     "zh": "腿",
+     "en": "leg",
+     "says": ""
+    },
+    {
+     "id": "knee",
+     "zh": "膝蓋",
+     "en": "knee",
+     "says": ""
+    },
+    {
+     "id": "foot",
+     "zh": "腳",
+     "en": "foot",
+     "says": ""
+    },
+    {
+     "id": "toe",
+     "zh": "腳趾",
+     "en": "toe",
+     "says": ""
+    }
+   ]
+  },
+  {
+   "id": "home",
+   "zh": "家裡的東西",
+   "en": "things at home",
+   "cards": [
+    {
+     "id": "cup",
+     "zh": "杯子",
+     "en": "cup",
+     "says": ""
+    },
+    {
+     "id": "bowl",
+     "zh": "碗",
+     "en": "bowl",
+     "says": ""
+    },
+    {
+     "id": "spoon",
+     "zh": "湯匙",
+     "en": "spoon",
+     "says": ""
+    },
+    {
+     "id": "chopsticks",
+     "zh": "筷子",
+     "en": "chopsticks",
+     "says": ""
+    },
+    {
+     "id": "plate",
+     "zh": "盤子",
+     "en": "plate",
+     "says": ""
+    },
+    {
+     "id": "toothbrush",
+     "zh": "牙刷",
+     "en": "toothbrush",
+     "says": ""
+    },
+    {
+     "id": "towel",
+     "zh": "毛巾",
+     "en": "towel",
+     "says": ""
+    },
+    {
+     "id": "soap",
+     "zh": "肥皂",
+     "en": "soap",
+     "says": ""
+    },
+    {
+     "id": "comb",
+     "zh": "梳子",
+     "en": "comb",
+     "says": ""
+    },
+    {
+     "id": "chair",
+     "zh": "椅子",
+     "en": "chair",
+     "says": ""
+    },
+    {
+     "id": "table",
+     "zh": "桌子",
+     "en": "table",
+     "says": ""
+    },
+    {
+     "id": "bed",
+     "zh": "床",
+     "en": "bed",
+     "says": ""
+    },
+    {
+     "id": "pillow",
+     "zh": "枕頭",
+     "en": "pillow",
+     "says": ""
+    },
+    {
+     "id": "clock",
+     "zh": "時鐘",
+     "en": "clock",
+     "says": "滴答"
+    },
+    {
+     "id": "phone",
+     "zh": "電話",
+     "en": "phone",
+     "says": "鈴鈴"
+    },
+    {
+     "id": "tv",
+     "zh": "電視",
+     "en": "TV",
+     "says": ""
+    },
+    {
+     "id": "lamp",
+     "zh": "燈",
+     "en": "lamp",
+     "says": ""
+    },
+    {
+     "id": "door",
+     "zh": "門",
+     "en": "door",
+     "says": "叩叩"
+    },
+    {
+     "id": "window",
+     "zh": "窗戶",
+     "en": "window",
+     "says": ""
+    },
+    {
+     "id": "key",
+     "zh": "鑰匙",
+     "en": "key",
+     "says": ""
+    }
+   ]
+  },
+  {
+   "id": "clothes",
+   "zh": "衣服",
+   "en": "clothes",
+   "cards": [
+    {
+     "id": "tshirt",
+     "zh": "T 恤",
+     "en": "T-shirt",
+     "says": ""
+    },
+    {
+     "id": "pants",
+     "zh": "褲子",
+     "en": "pants",
+     "says": ""
+    },
+    {
+     "id": "skirt",
+     "zh": "裙子",
+     "en": "skirt",
+     "says": ""
+    },
+    {
+     "id": "jacket",
+     "zh": "外套",
+     "en": "jacket",
+     "says": ""
+    },
+    {
+     "id": "socks",
+     "zh": "襪子",
+     "en": "socks",
+     "says": ""
+    },
+    {
+     "id": "shoes",
+     "zh": "鞋子",
+     "en": "shoes",
+     "says": ""
+    },
+    {
+     "id": "hat",
+     "zh": "帽子",
+     "en": "hat",
+     "says": ""
+    },
+    {
+     "id": "gloves",
+     "zh": "手套",
+     "en": "gloves",
+     "says": ""
+    },
+    {
+     "id": "scarf",
+     "zh": "圍巾",
+     "en": "scarf",
+     "says": ""
+    },
+    {
+     "id": "pajamas",
+     "zh": "睡衣",
+     "en": "pajamas",
+     "says": ""
+    },
+    {
+     "id": "raincoat",
+     "zh": "雨衣",
+     "en": "raincoat",
+     "says": ""
+    },
+    {
+     "id": "rain_boots",
+     "zh": "雨鞋",
+     "en": "rain boots",
+     "says": ""
+    },
+    {
+     "id": "underwear",
+     "zh": "內褲",
+     "en": "underwear",
+     "says": ""
+    },
+    {
+     "id": "vest",
+     "zh": "背心",
+     "en": "vest",
+     "says": ""
+    },
+    {
+     "id": "dress",
+     "zh": "洋裝",
+     "en": "dress",
+     "says": ""
+    },
+    {
+     "id": "shorts",
+     "zh": "短褲",
+     "en": "shorts",
+     "says": ""
+    },
+    {
+     "id": "sweater",
+     "zh": "毛衣",
+     "en": "sweater",
+     "says": ""
+    },
+    {
+     "id": "slippers",
+     "zh": "拖鞋",
+     "en": "slippers",
+     "says": ""
+    },
+    {
+     "id": "diaper",
+     "zh": "尿布",
+     "en": "diaper",
+     "says": ""
+    },
+    {
+     "id": "bib",
+     "zh": "圍兜",
+     "en": "bib",
+     "says": ""
+    }
+   ]
+  }
+ ]
+}
