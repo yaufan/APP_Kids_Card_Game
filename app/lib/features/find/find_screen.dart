@@ -158,13 +158,18 @@ class _FindScreenState extends ConsumerState<FindScreen> with SingleTickerProvid
             ),
             Expanded(
               child: LayoutBuilder(builder: (context, box) {
+                // As many columns as make the cards biggest.
                 final n = _round.choices.length;
-                final cols = n == 2 || box.maxWidth > 700 && n <= 4 && box.maxWidth > box.maxHeight ? n : 2;
-                final rows = (n / cols).ceil();
-                final aspect = n == 2 ? 1.3 : 1.0;
-                final w = math.min((box.maxWidth - 24 - cols * 20.0) / cols, ((box.maxHeight - 30) / rows - 20) / aspect).clamp(60.0, 320.0);
+                const gap = 20.0, aspect = 0.86;
+                var w = 0.0;
+                for (var cols = 1; cols <= n; cols++) {
+                  final rows = (n / cols).ceil();
+                  final fit = math.min((box.maxWidth - 32 - (cols - 1) * gap) / cols, (box.maxHeight - 16 - (rows - 1) * gap) / rows / aspect);
+                  w = math.max(w, fit);
+                }
+                w = w.clamp(60.0, 340.0);
                 return Center(
-                  child: Wrap(alignment: WrapAlignment.center, spacing: 20, runSpacing: 20, children: [
+                  child: Wrap(alignment: WrapAlignment.center, spacing: gap, runSpacing: gap, children: [
                     for (final c in _round.choices)
                       _Choice(
                         key: ValueKey('choice-${c.id}'),
