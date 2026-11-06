@@ -7,7 +7,14 @@
 - 不連網、不定位、沒有廣告、沒有抽卡、沒有帳號；每次玩多久由家長設定。
 
 ## 目前進度
-- 0.1 開發中：翻翻卡、找找看、真實版和卡通版切換、6 組 120 張卡片、念名字和聲音、休息提醒、家長模式。
+- 0.1 做好了，還沒發布：翻翻卡、找找看、真實版和卡通版切換、6 組 120 張卡片（240 張圖）、念名字和動物、車子的聲音、休息提醒、家長模式、APP 圖示。版本紀錄在 [CHANGELOG.md](CHANGELOG.md)。
+
+## 程式和素材在哪裡
+- `app/`：Flutter 程式。`lib/core/` 是卡片、存檔和規則、聲音、語音；`lib/features/` 是卡片盒、翻翻卡、找找看、休息、家長模式。
+- `design/cards.json`：卡片名單（國語、英文、叫聲的字）。
+- `design/art/`：用 Python 畫卡片（`deck_*.py`）和 APP 圖示（`icon.py`）。
+- `design/sounds/make_sounds.py`：合成全部的音樂和聲音。
+- 測試：在 `app/` 裡 `flutter test`；完整流程 `flutter test test/flow_test.dart`，截圖在 `app/build/screenshots/`。
 
 ## 授權
 - 非商業使用授權：自己、家人使用，或學校、非營利團體的教學，都可以免費使用、修改、分享，要註明出處。
