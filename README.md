@@ -6,8 +6,13 @@
 - 和「[畫畫小鎮](https://github.com/yaufan/APP_Kids_Paint)」「[字母寵物](https://github.com/yaufan/APP_Kids_Paint_for_learning_writing)」「[動物小餐廳](https://github.com/yaufan/APP_Kids_Cook)」是兄弟 APP：同一個作者、同一套技術、不同畫風。
 - 不連網、不定位、沒有廣告、沒有抽卡、沒有帳號；每次玩多久由家長設定。
 
+## 下載（Android）
+- 最新版：[Releases](https://github.com/yaufan/APP_Kids_Card_Game/releases/latest)，一般手機下載 `card-world-版本-arm64.apk`。
+- 用手機掃描 [docs/download-qr.png](docs/download-qr.png)。
+
 ## 目前進度
-- 0.1 做好了，還沒發布：翻翻卡、找找看、真實版和卡通版切換、6 組 120 張卡片（240 張圖）、念名字和動物、車子的聲音、休息提醒、家長模式、APP 圖示。版本紀錄在 [CHANGELOG.md](CHANGELOG.md)。
+- 0.1.0（測試版，2026-11-06）：翻翻卡、找找看、真實版和卡通版切換、6 組 120 張卡片（240 張圖）、念名字和動物、車子的聲音、休息提醒、家長模式、APP 圖示。
+- 版本紀錄：[CHANGELOG.md](CHANGELOG.md)。
 
 ## 程式和素材在哪裡
 - `app/`：Flutter 程式。`lib/core/` 是卡片、存檔和規則、聲音、語音；`lib/features/` 是卡片盒、翻翻卡、找找看、休息、家長模式。
