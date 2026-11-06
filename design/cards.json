@@ -329,13 +329,13 @@
      "id": "fire_truck",
      "zh": "消防車",
      "en": "fire truck",
-     "says": "喔咿喔咿"
+     "says": "嗚～嗚～"
     },
     {
      "id": "ambulance",
      "zh": "救護車",
      "en": "ambulance",
-     "says": ""
+     "says": "喔咿喔咿"
     },
     {
      "id": "police_car",
