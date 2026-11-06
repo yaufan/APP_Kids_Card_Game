@@ -86,7 +86,7 @@ class TestApp {
 
   void go(String location) => container.read(routerProvider).go(location);
 
-  String get location => container.read(routerProvider).routerDelegate.currentConfiguration.uri.path;
+  String get location => container.read(routerProvider).state.matchedLocation;
 
   /// Lets the pictures load and the screen move on [ms] milliseconds.
   Future<void> settle([int ms = 400]) async {

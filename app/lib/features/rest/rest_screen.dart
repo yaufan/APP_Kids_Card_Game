@@ -165,7 +165,7 @@ class NightSky extends CustomPainter {
     // Sleepy z's.
     for (final (i, s) in [0.05, 0.065, 0.08].indexed) {
       final tp = TextPainter(
-        text: TextSpan(text: 'z', style: TextStyle(color: Colors.white.withValues(alpha: 0.85), fontSize: w * s, fontWeight: FontWeight.w700)),
+        text: TextSpan(text: 'z', style: TextStyle(fontFamily: CalmTheme.font, color: Colors.white.withValues(alpha: 0.85), fontSize: w * s, fontWeight: FontWeight.w700)),
         textDirection: TextDirection.ltr,
       )..layout();
       tp.paint(canvas, Offset(w * (0.7 + i * 0.07), h * (0.24 - i * 0.08)));

@@ -58,9 +58,10 @@ class _DecksScreenState extends ConsumerState<DecksScreen> {
     return Scaffold(
       body: SafeArea(
         child: LayoutBuilder(builder: (context, box) {
-          final columns = box.maxWidth > 700 ? 3 : 2;
+          final wide = box.maxWidth > 700;
+          final columns = wide ? 3 : 2;
           final rows = (book.decks.length / columns).ceil();
-          final size = [(box.maxWidth - 40) / columns - 24, (box.maxHeight - 110) / rows - 52, 220.0].reduce((a, b) => a < b ? a : b);
+          final size = [(box.maxWidth - 40) / columns - 24, (box.maxHeight - 110) / rows - 52, wide ? 280.0 : 220.0].reduce((a, b) => a < b ? a : b);
           return Column(children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 14, 14, 0),
@@ -88,7 +89,9 @@ class _DecksScreenState extends ConsumerState<DecksScreen> {
             ),
             Expanded(
               child: Center(
-                child: Wrap(alignment: WrapAlignment.center, spacing: 24, runSpacing: 14, children: [
+                child: SizedBox(
+                  width: columns * (size + 24),
+                  child: Wrap(alignment: WrapAlignment.center, spacing: 24, runSpacing: 14, children: [
                   for (final d in book.decks)
                     _DeckButton(
                       deck: d,
@@ -98,7 +101,8 @@ class _DecksScreenState extends ConsumerState<DecksScreen> {
                       locked: !full && !DecksScreen.free.contains(d.id),
                       onTap: () => _open(d),
                     ),
-                ]),
+                  ]),
+                ),
               ),
             ),
           ]);

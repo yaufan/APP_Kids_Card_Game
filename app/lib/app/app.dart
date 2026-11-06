@@ -100,7 +100,8 @@ class _RestGuardState extends ConsumerState<RestGuard> {
     final now = ref.read(clockProvider)();
     final g = ref.read(gameProvider);
     final router = ref.read(routerProvider);
-    final path = router.routerDelegate.currentConfiguration.uri.path;
+    // The top page, including ones pushed on top (a deck, parent mode).
+    final path = router.state.matchedLocation;
     if (path.startsWith('/parent')) return;
     if (g.restSince != null) {
       if (g.resting(now)) {

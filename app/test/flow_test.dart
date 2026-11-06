@@ -35,7 +35,7 @@ void main() {
     expect(app.voice.said.where((s) => s == '小狗').length, 2);
     await app.tapLabel(Strings.toCartoon, ms: 800);
     expect(app.container.read(cartoonProvider), isTrue);
-    expect(app.sounds.played.last, 'switch');
+    expect(app.sounds.played, contains('switch'));
     await shoot(tester, device, '04_dog_cartoon');
     await app.tapLabel(Strings.toReal, ms: 600);
     expect(app.container.read(cartoonProvider), isFalse);

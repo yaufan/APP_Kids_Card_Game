@@ -167,7 +167,7 @@ class _FindScreenState extends ConsumerState<FindScreen> with SingleTickerProvid
                   final fit = math.min((box.maxWidth - 32 - (cols - 1) * gap) / cols, (box.maxHeight - 16 - (rows - 1) * gap) / rows / aspect);
                   w = math.max(w, fit);
                 }
-                w = w.clamp(60.0, 340.0);
+                w = w.clamp(60.0, 440.0);
                 return Center(
                   child: Wrap(alignment: WrapAlignment.center, spacing: gap, runSpacing: gap, children: [
                     for (final c in _round.choices)
