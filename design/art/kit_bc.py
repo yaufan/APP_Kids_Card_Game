@@ -169,6 +169,21 @@ def poly(pts, close=True):
     return "M" + " L".join(f"{n(p[0])},{n(p[1])}" for p in pts) + ("Z" if close else "")
 
 
+def rpoly(pts, r=6.0):
+    """Closed polygon with softly rounded corners; a point may carry its own radius (x, y, r)."""
+    m = len(pts)
+    d = ""
+    for i in range(m):
+        a, p, b = pts[i - 1], pts[i], pts[(i + 1) % m]
+        rr = p[2] if len(p) > 2 else r
+        la, lb = math.hypot(p[0] - a[0], p[1] - a[1]) or 1, math.hypot(b[0] - p[0], b[1] - p[1]) or 1
+        ra, rb = min(rr, la / 2), min(rr, lb / 2)
+        s = (p[0] - (p[0] - a[0]) * ra / la, p[1] - (p[1] - a[1]) * ra / la)
+        e = (p[0] + (b[0] - p[0]) * rb / lb, p[1] + (b[1] - p[1]) * rb / lb)
+        d += (f"M{n(s[0])},{n(s[1])}" if i == 0 else f" L{n(s[0])},{n(s[1])}") + f" Q{n(p[0])},{n(p[1])} {n(e[0])},{n(e[1])}"
+    return d + "Z"
+
+
 def _sides(pts, k=4):
     c = spline(pts, k)
     L, R, N = [], [], []

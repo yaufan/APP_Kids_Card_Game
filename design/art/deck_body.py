@@ -766,7 +766,7 @@ C_ARMS = {"down": [(-86, 118), (-100, 184), (-104, 230)], "belly": [(-86, 118), 
           "wave": [(-86, 118), (-130, 166), (-138, 96)]}
 
 
-def c_body(pose="down", tee="blue", hair="boy", mouth="smile", ring="", ring_under_arms=False, back=False, neck_up=0):
+def c_body(pose="down", tee="blue", hair="boy", mouth="smile", ring="", ring_under_arms=False, back=False, neck_up=0, arms=True):
     c = CTEE[tee]
     o = []
     for s in (-1, 1):
@@ -779,7 +779,7 @@ def c_body(pose="down", tee="blue", hair="boy", mouth="smile", ring="", ring_und
     if ring_under_arms:
         o.append(ring)
     sleeves = []
-    for s in (-1, 1):
+    for s in ((-1, 1) if arms else ()):
         pose_s = pose if (s < 0 or pose == "belly") else "down"
         pts = [(x * (-s if s > 0 else 1), y) for x, y in C_ARMS[pose_s]]
         o.append(line(f"M{pts[0][0]},{pts[0][1]} L{pts[1][0]},{pts[1][1]} L{pts[2][0]},{pts[2][1]}", CSKIN, 26))
@@ -921,7 +921,7 @@ CARTOON = {
     "belly": lambda: (c_body("belly", "sun", "girl", ring=flat_ring(0, 176, 66, 40, w=8), ring_under_arms=True), (-170, -110, 170, 345)),
     "back": lambda: (c_body("down", "coral", back=True, ring=flat_ring(0, 150, 56, 52, w=8)), (-170, -110, 170, 345)),
     "leg": lambda: (c_body("down", "mint", ring=flat_ring(-32, 280, 36, 70, w=7)), (-180, -110, 180, 350)),
-    "knee": lambda: (c_body("down", "lilac", "girl", ring=flat_ring(-32, 290, 26, 26, w=7)), (-67, 216, 67, 350)),
+    "knee": lambda: (c_body("down", "lilac", "girl", ring=flat_ring(-32, 290, 25, 25, w=7), arms=False), (-90, 192, 90, 350)),
     "hand": lambda: (flat_disc(0, 22, 128, 128) + c_hand(), (-130, -108, 130, 150)),
     "finger": lambda: (c_hand(fold=True) + flat_ring(36, -34, 25, 50, 12, w=8), (-100, -100, 100, 132)),
     "foot": lambda: (flat_disc(-36, -16, 112, 104) + c_foot(), (-148, -120, 76, 88)),
