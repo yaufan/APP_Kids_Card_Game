@@ -9,6 +9,7 @@ import '../core/providers.dart';
 import '../features/decks/decks_screen.dart';
 import '../features/find/find_screen.dart';
 import '../features/flip/flip_screen.dart';
+import '../features/parent/parent_gate.dart';
 import '../features/parent/parent_screen.dart';
 import '../features/rest/rest_screen.dart';
 import 'strings.dart';
@@ -18,6 +19,9 @@ final routerProvider = Provider<GoRouter>((ref) {
   final resting = ref.read(gameProvider).resting(ref.read(clockProvider)());
   final router = GoRouter(
     initialLocation: resting ? '/rest' : '/',
+    // Always start here, whatever page another app asks the phone to open.
+    overridePlatformDefaultLocation: true,
+    redirect: (_, state) => state.matchedLocation == '/parent' && !ParentPass.take() ? '/' : null,
     routes: [
       GoRoute(path: '/', builder: (_, _) => const DecksScreen()),
       GoRoute(path: '/deck/:id', builder: (_, s) => FlipScreen(deck: s.pathParameters['id']!)),

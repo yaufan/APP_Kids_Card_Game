@@ -76,6 +76,6 @@ abstract final class Strings {
   static const fullNote = '免費版有動物和水果兩組；完整版有全部的卡片。（測試版先全部打開。）';
   static const fullSwitch = '打開完整版（測試用）';
   static const about = '關於';
-  static const privacy = '不連網、不定位、沒有廣告、沒有帳號；玩的紀錄只存在這支手機裡。';
+  static const privacy = '不連網、不定位、沒有廣告、沒有帳號；玩的紀錄不會傳給任何人，只存在這支手機（和家長自己帳號的手機備份）裡。';
   static String version(String v) => '版本 $v';
 }
