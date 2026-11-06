@@ -47,6 +47,25 @@ def fade_piece(d, color, y0, y1, y2, xr=None, shade=SKIN_DD):
     return o
 
 
+def _ext(p, q, y):
+    """Point on the straight line from q through p at height y."""
+    dx, dy = p[0] - q[0], p[1] - q[1]
+    return (p[0] + dx * (y - p[1]) / dy, y)
+
+
+def cut_outline(chain, y_cut):
+    """Outline from an open chain of points (one side of the cut, around, to the other side), closed with
+    straight sides down (or up) to y_cut, so a fade piece can continue those sides exactly."""
+    a, b = _ext(chain[0], chain[1], y_cut), _ext(chain[-1], chain[-2], y_cut)
+    return curve(chain, closed=False) + f" L{n(b[0])},{n(b[1])} L{n(a[0])},{n(a[1])}Z"
+
+
+def cut_piece(chain, y0, y1):
+    """The band between y0 and y1 along the straight sides of cut_outline(chain, ...)."""
+    pts = [_ext(chain[0], chain[1], y0), _ext(chain[0], chain[1], y1), _ext(chain[-1], chain[-2], y1), _ext(chain[-1], chain[-2], y0)]
+    return poly(pts)
+
+
 # ================================================================ realistic head (front)
 FACE = [(0, -82), (38, -77), (61, -60), (72, -32), (74, -2), (72, 24), (64, 46), (48, 64), (26, 76), (0, 80),
         (-26, 76), (-48, 64), (-64, 46), (-72, 24), (-74, -2), (-72, -32), (-61, -60), (-38, -77)]
@@ -232,7 +251,8 @@ def head_front(hair="boy", mouth="smile", happy=0.0, raise_=0.0, look=(0, 0), ba
     o.append(brow(-1, raise_=raise_) + brow(1, raise_=raise_))
     o.append(eye(-29, 5, 1.0, -1, look, happy) + eye(29, 5, 1.0, 1, look, happy))
     o.append(nose(31))
-    o.append({"smile": mouth_smile, "teeth": mouth_teeth, "tongue": mouth_tongue}[mouth]())
+    o.append({"smile": mouth_smile, "tongue": mouth_tongue}[mouth]() if mouth != "teeth" else
+             f'<g transform="translate(0 47) scale(.84) translate(0 -47)">{mouth_teeth(47)}</g>')
     o.append(hair_front(hair))
     if hair == "girl":
         o.append(hair_clip(50, -70))
@@ -256,7 +276,8 @@ def finger_set(spread):
     return F, thumb
 
 
-PALM = [(-42, 12), (-26, 3), (0, 1), (22, 3), (38, 13), (46, 36), (42, 62), (36, 90), (34, 100), (-32, 100), (-37, 88), (-44, 56), (-46, 28)]
+PALM = [(36, 90), (42, 62), (46, 36), (38, 13), (22, 3), (0, 1), (-26, 3), (-42, 12), (-46, 28), (-44, 56), (-37, 88)]
+FIST = [(36, 90), (42, 62), (46, 36), (40, 16), (30, 8), (14, 6), (-4, 4), (-22, 4), (-36, 2), (-44, 14), (-47, 30), (-44, 56), (-37, 88)]
 
 
 def hand_big(spread=1.0, detail=True, fold=None):
@@ -280,8 +301,7 @@ def hand_big(spread=1.0, detail=True, fold=None):
                     creases.append(f"M{cx + math.cos(ra) * w * .5:.1f},{cy + math.sin(ra) * w * .5:.1f}Q{cx + math.cos(math.radians(a)) * 1.6:.1f},"
                                    f"{cy + math.sin(math.radians(a)) * 1.6:.1f} {cx - math.cos(ra) * w * .5:.1f},{cy - math.sin(ra) * w * .5:.1f}")
             nails.append(nail(f))
-    palm = curve(PALM) if not fold else curve([(-40, 4), (-28, -12), (-10, -18), (8, -18), (24, -10), (38, 8), (46, 36), (42, 62),
-                                               (36, 92), (34, 104), (-32, 104), (-37, 90), (-44, 56), (-46, 24)])
+    palm = cut_outline(PALM, 100)
     o.append(P(palm, fill))
     pd = []
     if fold:
@@ -323,7 +343,7 @@ def hand_small(x, y, ang, s=.42, mirror=False, spread=0.0, palm_side=False):
     for f in F:
         d = tube(f)
         o.append(P(d, fill) + rim(d, SKIN_DD, 4, .35, 2, 2.5))
-    palm = curve(PALM)
+    palm = cut_outline(PALM, 100)
     o.append(P(palm, fill) + rim(palm, SKIN_DD, 5, .35, 2, 2.5))
     td = tube(thumb)
     o.append(P(td, fill) + rim(td, SKIN_DD, 4, .35, 2, 2.5))
@@ -529,22 +549,15 @@ def r_eye():
 
 
 def r_teeth():
-    s, my = 2.6, 30
-    T = f"translate(0 {n(my - 58 * s)}) scale({s})"
-    top = rg([(0, SKIN_L), (.5, SKIN), (.62, SKIN, .95), (.8, SKIN, .45), (1, SKIN, 0)], 0, 48, 64, user=True)
-    face = [f'<path d="{FACE_D}" fill="{top}"/>', spot(-44, 34, 20, 14, BLUSH, .4), spot(44, 34, 20, 14, BLUSH, .4),
-            spot(0, 70, 22, 8, SKIN_L, .45), spot(52, 52, 20, 26, SKIN_DD, .25)]
-    rimg = clipped(f"M-90,40 H90 V100 H-90Z", rim(FACE_D, SKIN_DD, 6, .4, 2.5, 3))
-    o = [f'<g transform="{T}">{clipped(FACE_D, "".join(face))}{rimg}{nose(32, bridge=False)}{mouth_teeth(56)}</g>']
-    o.append(glow_ring(0, my + 4, 102, 66, w=12))
-    return "".join(o), (-200, -170, 200, 170)
+    head = head_front("boy", "teeth", happy=.5)
+    return head + glow_ring(0, 55, 31, 23, w=6), (-98, -110, 98, 104)
 
 
-WRIST = "M-36,78 C-35,100 -33,116 -32,134 L32,134 C33,116 34,100 36,78Z"
+WRIST = cut_piece(PALM, 80, 136)
 
 
 def r_hand():
-    o = [halo(0, 6, 128, 128), hand_big(1.0), fade_piece(WRIST, "#E2AA87", 78, 96, 134, xr=27)]
+    o = [halo(0, 6, 128, 128), hand_big(1.0), fade_piece(WRIST, "#E4AE8B", 80, 96, 136, xr=26)]
     return "".join(o), (-80, -120, 90, 130)
 
 
@@ -559,8 +572,7 @@ def fist_big():
     for x in (-31, -13, 5):
         ld = tube([(x, 10, 10.6), (x + .5, -8, 10.2), (x + 1, -16, 9.8)])
         o.append(P(ld, fill) + clipped(ld, spot(x - 2, -14, 7, 6, "#FBE3D2", .8) + spot(x + 5, 0, 5, 12, SKIN_DD, .25)) + rim(ld, SKIN_DD, 4, .4, 2, 2.5))
-    palm = curve([(-44, 14), (-36, 2), (-22, 4), (-4, 4), (14, 6), (30, 8), (40, 16), (46, 36), (42, 62), (36, 90), (34, 100), (-32, 100),
-                  (-37, 88), (-44, 56), (-47, 30)])
+    palm = cut_outline(FIST, 100)
     o.append(P(palm, fill))
     pd = [spot(x, 6, 7, 4, CREASE, .3) for x in (-31, -13, 5, 22)]
     pd.append(spot(-14, 44, 30, 32, SKIN_L, .35) + sline("M-44,40 C-38,70 -34,96 -32,110", SKIN_DD, 10, .25))
@@ -584,16 +596,16 @@ def r_finger():
     F, _ = finger_set(1.0)
     x0, y0 = F[3][0][0], F[3][0][1]
     x1, y1 = F[3][2][0], F[3][2][1]
-    o = [fist_big(), fade_piece(WRIST, "#E2AA87", 78, 96, 134, xr=27), glow_ring((x0 + x1) / 2 + 1, (y0 + y1) / 2 - 7, 24, 47, 9, w=8)]
+    o = [fist_big(), fade_piece(WRIST, "#E4AE8B", 80, 96, 136, xr=26), glow_ring((x0 + x1) / 2 + 1, (y0 + y1) / 2 - 7, 24, 47, 9, w=8)]
     return "".join(o), (-80, -110, 90, 130)
 
 
-FOOT_SIDE = [(-120, 58), (-122, 40), (-112, 28), (-94, 29), (-74, 22), (-50, 8), (-30, -12), (-17, -36), (-13, -70), (44, -70), (42, -38),
-             (46, -12), (58, 10), (64, 32), (58, 52), (44, 62), (8, 64), (-30, 60), (-70, 64), (-104, 62)]
+FOOT_SIDE = [(41, -46), (43, -24), (50, -4), (60, 14), (64, 32), (58, 52), (44, 62), (8, 64), (-30, 60), (-70, 64), (-104, 62), (-120, 58),
+             (-122, 40), (-112, 28), (-94, 29), (-74, 22), (-50, 8), (-32, -10), (-20, -30), (-16, -46)]
 
 
 def r_foot():
-    d = curve(FOOT_SIDE)
+    d = cut_outline(FOOT_SIDE, -72)
     fill = rg([(0, SKIN_L), (.55, SKIN), (1, SKIN_D)], -40, -10, 150, user=True)
     o = [halo(-34, -6, 122, 108), ground(-28, 66, 110, 8, .22)]
     for x, y, r in [(-75, 20, 5.8), (-85, 21, 6.6), (-96, 23, 7.4), (-108, 26, 8.2)]:
@@ -613,18 +625,18 @@ def r_foot():
     o.append('<path d="M-128,36 C-126,31 -119,28 -112,29 C-112,35 -116,39 -122,40 C-126,40 -129,39 -128,36Z" fill="#F3CDBF"/>'
              '<path d="M-126,34 C-124,31 -120,30 -116,30" fill="none" stroke="#FFF5EE" stroke-width="1.6" stroke-linecap="round"/>')
     o.append(line("M-96,34 C-92,42 -93,50 -97,57", CREASE, 1.2, .45))
-    o.append(fade_piece("M-14,-48 C-14,-80 -12,-104 -11,-128 L44,-128 C43,-104 43,-80 43,-48Z", "#ECBD9B", -48, -70, -128, xr=37))
+    o.append(fade_piece(cut_piece(FOOT_SIDE, -50, -128), "#ECBE9D", -50, -70, -128, xr=36))
     return "".join(o), (-140, -125, 72, 72)
 
 
 TOES = [((30, -50), (31, -80), 15, 13), ((8, -58), (7, -86), 9.2, 8), ((-10, -56), (-12, -80), 8.6, 7.4), ((-26, -52), (-30, -72), 8, 6.8),
         ((-40, -46), (-45, -62), 7, 6)]
-FOOT_TOP = [(-34, 84), (-42, 52), (-48, 12), (-50, -26), (-45, -50), (-24, -60), (8, -66), (37, -62), (48, -48), (47, -6), (41, 48), (34, 84)]
+FOOT_TOP = [(41, 48), (47, -6), (48, -48), (37, -62), (8, -66), (-24, -60), (-45, -50), (-50, -26), (-48, 12), (-42, 52)]
 
 
 def foot_top(cx, cy, mirror, ang):
     sx = -1 if mirror else 1
-    d = curve(FOOT_TOP)
+    d = cut_outline(FOOT_TOP, 84)
     fill = rg([(0, SKIN_L), (.6, SKIN), (1, SKIN_D)], 0, -20, 130, user=True)
     o = [P(d, fill), clipped(d, spot(0, -10, 34, 50, SKIN_L, .45) + spot(-30, -44, 14, 10, SKIN_DD, .15)), rim(d, SKIN_DD, 7, .35, 2.5 * sx, 3)]
     for (bx, by), (tx_, ty_), w0, w1 in TOES[::-1]:
@@ -633,7 +645,7 @@ def foot_top(cx, cy, mirror, ang):
         o.append(P(td, fill) + clipped(td, spot(tx_ - 2, ty_ + 4, w1 * .7, w1 * .9, SKIN_L, .6)) + rim(td, SKIN_DD, 3, .4, 1.5 * sx, 2.5))
         o.append(nail(f, .78))
         o.append(line(f"M{n(bx - w0 * .6)},{n(by + 2)} Q{n(bx)},{n(by + 5)} {n(bx + w0 * .6)},{n(by + 2)}", CREASE, .9, .35))
-    o.append(fade_piece("M-41,58 C-38,80 -35,100 -33,126 L33,126 C35,100 38,80 41,58Z", "#ECBC99", 58, 80, 126))
+    o.append(fade_piece(cut_piece(FOOT_TOP, 62, 128), "#EAB996", 62, 80, 128, xr=30))
     return f'<g transform="translate({n(cx)} {n(cy)}) rotate({n(ang)}) scale({sx} 1)">{"".join(o)}</g>'
 
 
@@ -909,7 +921,7 @@ CARTOON = {
     "belly": lambda: (c_body("belly", "sun", "girl", ring=flat_ring(0, 176, 66, 40, w=8), ring_under_arms=True), (-170, -110, 170, 345)),
     "back": lambda: (c_body("down", "coral", back=True, ring=flat_ring(0, 150, 56, 52, w=8)), (-170, -110, 170, 345)),
     "leg": lambda: (c_body("down", "mint", ring=flat_ring(-32, 280, 36, 70, w=7)), (-180, -110, 180, 350)),
-    "knee": lambda: (c_body("belly", "lilac", "girl", ring=flat_ring(-32, 290, 26, 26, w=7)), (-100, 216, 100, 350)),
+    "knee": lambda: (c_body("down", "lilac", "girl", ring=flat_ring(-32, 290, 26, 26, w=7)), (-67, 216, 67, 350)),
     "hand": lambda: (flat_disc(0, 22, 128, 128) + c_hand(), (-130, -108, 130, 150)),
     "finger": lambda: (c_hand(fold=True) + flat_ring(36, -34, 25, 50, 12, w=8), (-100, -100, 100, 132)),
     "foot": lambda: (flat_disc(-36, -16, 112, 104) + c_foot(), (-148, -120, 76, 88)),
