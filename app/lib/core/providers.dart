@@ -11,7 +11,7 @@ import 'voice.dart';
 /// What time it is (tests and screenshots set it).
 final clockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
 
-/// Dice for orders (tests give a seeded one).
+/// Dice for 找找看 (tests give a seeded one).
 final randomProvider = Provider<math.Random>((ref) => math.Random());
 
 final storeProvider = Provider<GameStore>((ref) => MemoryStore());
@@ -37,7 +37,6 @@ class GameNotifier extends Notifier<Game> {
   void settings(Settings Function(Settings s) f) => change((g) => g.copyWith(settings: f(g.settings)));
 }
 
-
 /// When this sitting started (reset when a parent lets play go on).
 final sessionStartProvider = NotifierProvider<SessionStart, DateTime>(SessionStart.new);
 
@@ -46,4 +45,15 @@ class SessionStart extends Notifier<DateTime> {
   DateTime build() => ref.read(clockProvider)();
 
   void restart() => state = ref.read(clockProvider)();
+}
+
+/// Which picture the cards show now: the parent's choice to begin with,
+/// and the child can switch it on any card.
+final cartoonProvider = NotifierProvider<CartoonStyle, bool>(CartoonStyle.new);
+
+class CartoonStyle extends Notifier<bool> {
+  @override
+  bool build() => ref.watch(gameProvider.select((g) => g.settings.cartoon));
+
+  void toggle() => state = !state;
 }

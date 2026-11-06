@@ -101,12 +101,13 @@ class Game {
 
   factory Game.fromJson(Map<String, dynamic>? j) {
     if (j == null) return const Game();
+    final recent = j['recent'], rest = j['restSince'];
     Map<String, int> counts(Object? o) => {if (o is Map) for (final e in o.entries) if (e.key is String && e.value is int) e.key as String: e.value as int};
     return Game(
       seen: counts(j['seen']),
       found: counts(j['found']),
-      recent: [for (final r in j['recent'] as List? ?? const []) if (r is String) r],
-      restSince: DateTime.tryParse(j['restSince'] as String? ?? ''),
+      recent: [if (recent is List) for (final r in recent) if (r is String) r],
+      restSince: rest is String ? DateTime.tryParse(rest) : null,
       settings: Settings.fromJson(j['settings'] is Map ? (j['settings'] as Map).cast<String, dynamic>() : const {}),
     );
   }
