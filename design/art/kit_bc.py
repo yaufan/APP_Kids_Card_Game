@@ -102,9 +102,9 @@ def clipped(d, inner):
 
 
 def doc(body):
-    defs = "<defs>" + "".join(_DEFS.values()) + "</defs>" if _DEFS else ""
+    defs = "<defs>" + "".join(_DEFS.values()) + f'<clipPath id="card"><rect width="{SIZE}" height="{SIZE}"/></clipPath></defs>'
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {SIZE} {SIZE}" width="{SIZE}" height="{SIZE}">'
-            f'{defs}{body}</svg>\n')
+            f'{defs}<g clip-path="url(#card)">{body}</g></svg>\n')
 
 
 def fit(svg, box, fill=.86, dx=0, dy=0):

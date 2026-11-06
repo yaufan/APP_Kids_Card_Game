@@ -721,7 +721,7 @@ REAL = {
     "elbow": lambda: (body_front("wave", "blue", ring=glow_ring(-126, 200, 30, 30, w=7)), (-165, -115, 135, 330)),
     "belly": lambda: (body_front("belly", "sun", "girl", ring=glow_ring(0, 236, 74, 52, w=8), ring_under_arms=True), (-150, -115, 150, 420)),
     "back": lambda: (body_back("coral", glow_ring(0, 186, 66, 70, w=9)), (-160, -115, 160, 420)),
-    "leg": lambda: (body_front("down", "mint", ring=glow_ring(-37, 466, 48, 142, w=8)), (-200, -112, 200, 632)),
+    "leg": lambda: (body_front("down", "mint", ring=glow_ring(-37, 466, 50, 144, w=12)), (-200, -112, 200, 632)),
     "knee": lambda: (body_front("belly", "lilac", "girl", ring=glow_ring(-36, 466, 31, 31, w=7)), (-115, 340, 115, 628)),
     "eye": r_eye, "teeth": r_teeth, "hand": r_hand, "finger": r_finger, "foot": r_foot, "toe": r_toe, "ear": r_ear,
 }
@@ -920,7 +920,7 @@ CARTOON = {
     "elbow": lambda: (c_body("wave", "blue", ring=flat_ring(-131, 168, 28, 28, w=7)), (-170, -110, 130, 345)),
     "belly": lambda: (c_body("belly", "sun", "girl", ring=flat_ring(0, 176, 66, 40, w=8), ring_under_arms=True), (-170, -110, 170, 345)),
     "back": lambda: (c_body("down", "coral", back=True, ring=flat_ring(0, 150, 56, 52, w=8)), (-170, -110, 170, 345)),
-    "leg": lambda: (c_body("down", "mint", ring=flat_ring(-32, 280, 36, 70, w=7)), (-180, -110, 180, 350)),
+    "leg": lambda: (c_body("down", "mint", ring=flat_ring(-32, 282, 38, 72, w=9)), (-180, -110, 180, 350)),
     "knee": lambda: (c_body("down", "lilac", "girl", ring=flat_ring(-32, 290, 25, 25, w=7), arms=False), (-90, 192, 90, 350)),
     "hand": lambda: (flat_disc(0, 22, 128, 128) + c_hand(), (-130, -108, 130, 150)),
     "finger": lambda: (c_hand(fold=True) + flat_ring(36, -34, 25, 50, 12, w=8), (-100, -100, 100, 132)),
