@@ -52,6 +52,19 @@
 
 ## 程式在哪裡
 - `design/cards.json`：6 組、每組 20 張卡片（id、國語、英文、叫聲的字）。
-- `app/lib/core/`：卡片資料、存檔和規則、聲音、語音。
-- `app/lib/features/`：卡片盒、翻翻卡、找找看、休息、家長關卡和家長模式。
+- `app/lib/core/`：卡片資料、存檔和規則（`game.dart`：設定、翻過找過的卡、休息、`SavedSitting` 玩到一半的時間、`GateLock` 家長關卡的鎖）、聲音（`sounds.dart`：媒體音量、不搶聲音）、語音（`voice.dart`：只準備一次、只念最新的一句、在背景不說話）、`providers.dart`（`sittingProvider` 這次玩了多久、`busyProvider` 正在翻的卡或正在找的題、`parentGateProvider` 家長關卡開著）。
+- `app/lib/app/`：路由和休息時間（`app.dart` 的 `RestGuard`：家長關卡、家長模式、背景的時間不算；關掉再打開 10 分鐘內接著算；時間到了正在玩的先做完，最多一分鐘）、共用元件（`widgets.dart`：`speak`、`HushOnLeave` 離開畫面停自己的話、`Later` 等語音念完）。
+- `app/lib/features/`：卡片盒、翻翻卡、找找看、休息、家長關卡和家長模式（`parent_gate.dart`：`ParentPass`、`ParentWatch` 放到背景或五分鐘沒碰就關掉、鎖一分鐘／五分鐘／十五分鐘）。卡片盒和休息畫面按返回鍵不會關掉 APP（`PopScope`）。
+- 測試：`rules_test`、`safety_test`（權限、語音、不備份、聲音、家長關卡）、`version_test`、`screens_test`（玩的時間、背景、關掉再打開、時間往回調、正在玩的先做完、返回鍵、離開畫面的語音、家長模式自己關掉、家長關卡的鎖）、`flow_test`（手機和平板，截圖）、`demo/demo_video_test.dart`。
 - 圖：`design/art/`（Python 畫 SVG）；每張卡 `app/assets/art/cards/<組>/<id>.svg`（真實版）和 `<id>_cartoon.svg`（卡通版）。聲音：`design/sounds/make_sounds.py`。
+
+## 目前的狀態（2026-11-26）
+- 0.1.1 已發布。
+- 0.1.2（修正版）做好了、測試都過了，推到工作分支 `claude/relaxed-albattani-6mbwpz`，**還沒發布**（還沒推 `main`，推之前要先問使用者）。修了：
+  - 玩的時間：家長關卡和家長模式的時間、APP 在背景的時間不算；在背景不會開始休息；APP 關掉再打開 10 分鐘內接著算；手機時間往回調不會多玩、不會提早結束休息；時間到了正在翻的卡、正在找的題先做完（最多一分鐘）；家長答題時不會被休息打斷。
+  - 返回鍵在卡片盒和休息畫面不會關掉 APP。
+  - 語音：Android 11 以後找得到手機的語音（`AndroidManifest.xml` 的 `TTS_SERVICE`）；只準備一次、只念最新的一句；離開找找看會停；叫聲等名字念完；在背景不說話。
+  - 聲音改用媒體音量，震動、靜音模式也聽得到。
+  - 家長關卡的鎖越來越久（1、5、15 分鐘）、存起來；家長模式和家長關卡放到背景或五分鐘沒碰就關掉。
+  - 不備份到雲端（`allowBackup="false"`、`data_extraction_rules.xml`）；打包時多檢查相機、麥克風、聯絡人、照片的權限。
+- 還沒在真手機上試過：語音有沒有出來（Android 11 以後）、震動模式下的聲音、背景的時間。
