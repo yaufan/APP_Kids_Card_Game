@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -27,25 +26,28 @@ class FlipScreen extends ConsumerStatefulWidget {
   ConsumerState<FlipScreen> createState() => _FlipScreenState();
 }
 
-class _FlipScreenState extends ConsumerState<FlipScreen> with SingleTickerProviderStateMixin {
+class _FlipScreenState extends ConsumerState<FlipScreen> with SingleTickerProviderStateMixin, HushOnLeave {
   late final Sounds _sounds;
   late final Voice _voice;
+  late final Busy _busy;
   late final _flip = AnimationController(vsync: this, duration: const Duration(milliseconds: 520));
   var _index = 0;
   var _wiggle = 0;
-  Timer? _soundLater;
+  Later? _soundLater;
 
   @override
   void initState() {
     super.initState();
     _sounds = ref.read(soundsProvider);
     _voice = ref.read(voiceProvider);
+    _busy = ref.read(busyProvider);
     _sounds.hold(this, Music.play);
   }
 
   @override
   void dispose() {
     _soundLater?.cancel();
+    _busy.end(this);
     _flip.dispose();
     _sounds.release(this);
     super.dispose();
@@ -59,6 +61,8 @@ class _FlipScreenState extends ConsumerState<FlipScreen> with SingleTickerProvid
 
   void _tapCard() {
     if (_flip.isAnimating) return;
+    // The card being turned over and named is finished before a rest.
+    _busy.start(this);
     if (_faceUp) return _announce();
     _sounds.play('flip');
     _flip.forward().then((_) {
@@ -69,23 +73,23 @@ class _FlipScreenState extends ConsumerState<FlipScreen> with SingleTickerProvid
   }
 
   /// Says the card's name (and the English word, if the parent turned it
-  /// on), then makes its sound.
+  /// on), then makes its sound: once the words have been said, not over them.
   void _announce() {
     final c = _card;
-    final s = ref.read(gameProvider).settings;
     setState(() => _wiggle++);
-    if (s.voice) _voice.say(c.zh, en: s.english ? c.en : null);
+    final said = speak(ref, c.zh, en: c.en);
     _soundLater?.cancel();
     final sound = c.sound;
-    if (sound != null) {
-      _soundLater = Timer(Duration(milliseconds: s.voice ? 1100 : 150), () {
-        if (mounted) _sounds.play(sound);
-      });
-    }
+    _soundLater = Later(const Duration(milliseconds: 300), () {
+      if (!mounted) return;
+      if (sound != null) _sounds.play(sound);
+      _busy.end(this);
+    }, after: said, atMost: const Duration(seconds: 5));
   }
 
   void _go(int step) {
     _soundLater?.cancel();
+    _busy.end(this);
     _voice.stop();
     final n = _deck.cards.length;
     setState(() {

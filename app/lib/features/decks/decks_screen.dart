@@ -24,7 +24,7 @@ class DecksScreen extends ConsumerStatefulWidget {
   ConsumerState<DecksScreen> createState() => _DecksScreenState();
 }
 
-class _DecksScreenState extends ConsumerState<DecksScreen> {
+class _DecksScreenState extends ConsumerState<DecksScreen> with HushOnLeave {
   late final Sounds _sounds;
 
   @override
@@ -41,8 +41,7 @@ class _DecksScreenState extends ConsumerState<DecksScreen> {
   }
 
   void _open(Deck d) {
-    final s = ref.read(gameProvider).settings;
-    if (s.voice) ref.read(voiceProvider).say(d.zh, en: s.english ? d.en : null);
+    speak(ref, d.zh, en: d.en);
     context.push('/deck/${d.id}');
   }
 
@@ -55,7 +54,7 @@ class _DecksScreenState extends ConsumerState<DecksScreen> {
     final book = ref.watch(cardBookProvider);
     final full = ref.watch(gameProvider.select((g) => g.settings.full));
     final cartoon = ref.watch(cartoonProvider);
-    return Scaffold(
+    final page = Scaffold(
       body: SafeArea(
         child: LayoutBuilder(builder: (context, box) {
           final wide = box.maxWidth > 700;
@@ -109,6 +108,9 @@ class _DecksScreenState extends ConsumerState<DecksScreen> {
         }),
       ),
     );
+    // The card box is home: the system back does nothing (it used to close
+    // the app, and the play time began again on the next start).
+    return PopScope(canPop: false, child: page);
   }
 }
 

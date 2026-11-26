@@ -12,7 +12,6 @@ import '../../core/cards.dart';
 import '../../core/find.dart';
 import '../../core/providers.dart';
 import '../../core/sounds.dart';
-import '../../core/voice.dart';
 
 /// 找找看: "小狗在哪裡？" among two cards (three or four if the parent
 /// chose). A wrong card only says what it is; five found and a star.
@@ -27,9 +26,9 @@ class FindScreen extends ConsumerStatefulWidget {
   ConsumerState<FindScreen> createState() => _FindScreenState();
 }
 
-class _FindScreenState extends ConsumerState<FindScreen> with SingleTickerProviderStateMixin {
+class _FindScreenState extends ConsumerState<FindScreen> with SingleTickerProviderStateMixin, HushOnLeave {
   late final Sounds _sounds;
-  late final Voice _voice;
+  late final Busy _busy;
   late final _star = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
   late FindRound _round;
   var _done = 0;
@@ -37,14 +36,14 @@ class _FindScreenState extends ConsumerState<FindScreen> with SingleTickerProvid
   String? _named;
   final _wiggles = <String, int>{};
   var _finished = false;
-  Timer? _later;
-  Timer? _next;
+  Later? _later;
+  Later? _next;
 
   @override
   void initState() {
     super.initState();
     _sounds = ref.read(soundsProvider);
-    _voice = ref.read(voiceProvider);
+    _busy = ref.read(busyProvider);
     _sounds.hold(this, Music.play);
     _deal();
     WidgetsBinding.instance.addPostFrameCallback((_) => _ask());
@@ -54,6 +53,7 @@ class _FindScreenState extends ConsumerState<FindScreen> with SingleTickerProvid
   void dispose() {
     _later?.cancel();
     _next?.cancel();
+    _busy.end(this);
     _star.dispose();
     _sounds.release(this);
     super.dispose();
@@ -67,17 +67,16 @@ class _FindScreenState extends ConsumerState<FindScreen> with SingleTickerProvid
   @visibleForTesting
   List<String> get debugChoices => [for (final c in _round.choices) c.id];
 
+  /// A new question; it is finished before a rest.
   void _deal({String? last}) {
+    _busy.start(this);
     final g = ref.read(gameProvider);
     _round = FindRound.deal(_deck, g.settings.choices, ref.read(randomProvider), last: last, seen: g.seen.keys.toSet());
     _right = null;
     _named = null;
   }
 
-  void _say(String zh, {String? en}) {
-    final s = ref.read(gameProvider).settings;
-    if (mounted && s.voice) _voice.say(zh, en: s.english ? en : null);
-  }
+  Future<void> _say(String zh, {String? en}) => mounted ? speak(ref, zh, en: en) : Future.value();
 
   void _ask() => _say(Strings.whereIs(_round.target), en: _round.target.en);
 
@@ -91,10 +90,12 @@ class _FindScreenState extends ConsumerState<FindScreen> with SingleTickerProvid
         _named = null;
       });
       ref.read(gameProvider.notifier).change((g) => g.foundCard(c.id));
-      _say(Strings.rightIs(c), en: c.en);
+      // The card's sound once 「對了！是小狗」 has been said, and the next
+      // question not before.
+      final said = _say(Strings.rightIs(c), en: c.en);
       final sound = c.sound;
-      if (sound != null) _later = Timer(const Duration(milliseconds: 1300), () => mounted ? _sounds.play(sound) : null);
-      _next = Timer(const Duration(milliseconds: 2800), _advance);
+      if (sound != null) _later = Later(const Duration(milliseconds: 600), () => mounted ? _sounds.play(sound) : null, after: said);
+      _next = Later(const Duration(milliseconds: 2800), _advance, after: said);
       return;
     }
     _sounds.play('try');
@@ -107,6 +108,7 @@ class _FindScreenState extends ConsumerState<FindScreen> with SingleTickerProvid
 
   void _advance() {
     if (!mounted) return;
+    _busy.end(this);
     final last = _round.target.id;
     setState(() {
       _done++;

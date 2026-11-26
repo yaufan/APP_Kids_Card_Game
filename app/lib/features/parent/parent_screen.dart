@@ -7,6 +7,7 @@ import '../../app/theme.dart';
 import '../../app/version.dart';
 import '../../core/game.dart';
 import '../../core/providers.dart';
+import 'parent_gate.dart';
 
 /// Parent mode (after the gate): play time, the cards, sounds, what the
 /// child has played, ideas for playing together.
@@ -54,7 +55,7 @@ class ParentScreen extends ConsumerWidget {
 
     const note = TextStyle(fontSize: 14, height: 1.5, color: Calm.inkSoft);
 
-    return Scaffold(
+    final page = Scaffold(
       backgroundColor: Calm.parentBg,
       appBar: AppBar(
         backgroundColor: Calm.parentBg,
@@ -74,7 +75,7 @@ class ParentScreen extends ConsumerWidget {
               key: const ValueKey('play-on'),
               onPressed: () {
                 game.change((g) => g.playOn());
-                ref.read(sessionStartProvider.notifier).restart();
+                ref.read(sittingProvider).restart();
                 context.go('/');
               },
               child: const Text(Strings.playOn),
@@ -149,5 +150,8 @@ class ParentScreen extends ConsumerWidget {
         ]),
       ]),
     );
+    // Closes by itself when the app goes to the background or after five
+    // minutes without a touch.
+    return ParentWatch(onClose: () => context.go('/'), child: page);
   }
 }

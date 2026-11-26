@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
@@ -42,6 +43,30 @@ class RecordingSounds implements Sounds {
   void release(Object owner) => holders.release(owner);
 }
 
+/// A voice whose lines take as long as the test says: each says until
+/// [finish] is called (or [held] is false).
+class SlowVoice extends RecordingVoice {
+  final _waiting = <Completer<void>>[];
+  var held = true;
+
+  @override
+  Future<void> say(String zh, {String? en}) {
+    super.say(zh, en: en);
+    if (!held) return Future.value();
+    final c = Completer<void>();
+    _waiting.add(c);
+    return c.future;
+  }
+
+  /// The lines being said are over.
+  void finish() {
+    for (final c in _waiting) {
+      if (!c.isCompleted) c.complete();
+    }
+    _waiting.clear();
+  }
+}
+
 final shotKey = GlobalKey();
 
 /// The app on a phone screen, starting from [game].
@@ -58,12 +83,22 @@ class TestApp {
   Game get game => container.read(gameProvider);
   void change(Game Function(Game g) f) => container.read(gameProvider.notifier).change(f);
 
-  static Future<TestApp> start(WidgetTester tester, {Game game = const Game(), Size size = const Size(1080, 2340), double ratio = 2.75, String at = '/', int seed = 1}) async {
+  static Future<TestApp> start(
+    WidgetTester tester, {
+    Game game = const Game(),
+    Size size = const Size(1080, 2340),
+    double ratio = 2.75,
+    String at = '/',
+    int seed = 1,
+    DateTime? now,
+    RecordingVoice? voice,
+  }) async {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = ratio;
     addTearDown(tester.view.reset);
     final store = MemoryStore();
-    final app = TestApp(tester, store, RecordingSounds(), RecordingVoice());
+    final app = TestApp(tester, store, RecordingSounds(), voice ?? RecordingVoice());
+    if (now != null) app.now = now;
     await tester.pumpWidget(RepaintBoundary(
       key: shotKey,
       child: ProviderScope(
@@ -99,6 +134,41 @@ class TestApp {
   Future<void> tapLabel(String label, {int ms = 400}) async {
     await tester.tap(find.bySemanticsLabel(label).first);
     await settle(ms);
+  }
+
+  /// The app goes to the background (the home button).
+  Future<void> hide() async {
+    for (final s in [AppLifecycleState.inactive, AppLifecycleState.hidden, AppLifecycleState.paused]) {
+      tester.binding.handleAppLifecycleStateChanged(s);
+    }
+    await settle();
+  }
+
+  /// The app comes back.
+  Future<void> show() async {
+    for (final s in [AppLifecycleState.hidden, AppLifecycleState.inactive, AppLifecycleState.resumed]) {
+      tester.binding.handleAppLifecycleStateChanged(s);
+    }
+    await settle();
+  }
+
+  /// The system back key (or gesture).
+  Future<void> back() async {
+    await tester.binding.handlePopRoute();
+    await settle(600);
+  }
+
+  /// Answers the parent gate that is showing ([right] or a wrong answer).
+  Future<void> answerGate({bool right = true}) async {
+    final question = (find.textContaining('加').evaluate().first.widget as Text).data!.split(' ');
+    const digits = {'零': 0, '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9};
+    final sum = digits[question[0]]! + digits[question[2]]!;
+    // A wrong answer with as many digits (the gate checks once they are typed).
+    for (final d in '${right ? sum : (sum == 9 ? 8 : sum + 1)}'.split('')) {
+      await tester.tap(find.byKey(ValueKey('gate-key-$d')));
+      await settle(200);
+    }
+    await settle(800);
   }
 
   Future<void> end() async {

@@ -36,9 +36,9 @@ abstract final class Strings {
   static const callParent = '請爸爸媽媽來幫忙喔！';
   static const parentGateTitle = '家長確認';
   static String gateQuestion(String a, String b) => '$a 加 $b 等於多少？';
-  static const gateRules = '答錯三次要等一分鐘。';
+  static const gateRules = '答錯三次要等一分鐘，再錯會等更久。';
   static const wrongAnswer = '不對喔，換一題。';
-  static String gateWait(int s) => '請等 $s 秒再試';
+  static String gateWait(Duration left) => left > const Duration(minutes: 1) ? '請等 ${(left.inSeconds / 60).ceil()} 分鐘再試' : '請等 ${left.inSeconds + (left.inMilliseconds % 1000 > 0 ? 1 : 0)} 秒再試';
   static const backspace = '刪掉';
   static const cancel = '取消';
 
@@ -76,6 +76,6 @@ abstract final class Strings {
   static const fullNote = '免費版有動物和水果兩組；完整版有全部的卡片。（測試版先全部打開。）';
   static const fullSwitch = '打開完整版（測試用）';
   static const about = '關於';
-  static const privacy = '不連網、不定位、沒有廣告、沒有帳號；玩的紀錄不會傳給任何人，只存在這支手機（和家長自己帳號的手機備份）裡。';
+  static const privacy = '不連網、不定位、沒有廣告、沒有帳號；玩的紀錄不會傳給任何人，只存在這支手機裡（也不會跟著手機備份到雲端）。';
   static String version(String v) => '版本 $v';
 }

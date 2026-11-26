@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:card_world/core/find.dart';
 import 'package:card_world/core/game.dart';
+import 'package:card_world/core/providers.dart';
 import 'package:card_world/core/store.dart';
 import 'package:card_world/features/rest/rest_screen.dart';
 
@@ -69,6 +70,60 @@ void main() {
     g = g.playOn();
     expect(g.restSince, isNull);
     expect(g.resting(t), isFalse);
+  });
+
+  test('the sitting is kept: back within ten minutes goes on with it', () {
+    final t = DateTime(2026, 11, 6, 10);
+    final s = SavedSitting(const Duration(minutes: 4), t);
+    expect(s.goesOn(t.add(const Duration(minutes: 9, seconds: 59))), isTrue);
+    expect(s.goesOn(t.add(const Duration(minutes: 10))), isFalse);
+    expect(s.goesOn(t.subtract(const Duration(days: 1))), isTrue, reason: 'a clock moved back is no rest');
+    final g = Game(sitting: s).rest(t);
+    expect(g.sitting, isNull, reason: 'the rest ends the sitting');
+    final back = Game.fromJson(Game(sitting: s).toJson());
+    expect(back.sitting!.played, s.played);
+    expect(back.sitting!.seen, t);
+    expect(Game.fromJson({'sitting': {'played': -3, 'seen': 'x'}}).sitting, isNull);
+  });
+
+  test('the parent gate locks one minute, then five, then fifteen; a clock moved back never locks it for ever', () {
+    final t = DateTime(2026, 11, 6, 10);
+    var lock = const GateLock();
+    lock = lock.miss(t).miss(t);
+    expect(lock.left(t), Duration.zero);
+    lock = lock.miss(t);
+    expect(lock.left(t), const Duration(minutes: 1));
+    expect(lock.left(t.add(const Duration(seconds: 61))), Duration.zero);
+    for (final (n, length) in [(2, 5), (3, 15), (4, 15)]) {
+      final at = t.add(Duration(hours: n));
+      lock = lock.miss(at).miss(at).miss(at);
+      expect(lock.locks, n);
+      expect(lock.left(at), Duration(minutes: length));
+    }
+    // Kept in the game.
+    final back = Game.fromJson(Game(gate: lock).toJson()).gate;
+    expect(back.locks, 4);
+    expect(back.since, lock.since);
+    // A clock moved back a year: locked fifteen minutes from then, not a year.
+    final early = lock.since!.subtract(const Duration(days: 365));
+    final seen = lock.at(early);
+    expect(seen.since, early);
+    expect(seen.left(early.add(const Duration(minutes: 15))), Duration.zero);
+  });
+
+  test('a screen going away cannot let go of the next screen\'s card or question', () {
+    final busy = Busy();
+    final flip = Object(), find = Object();
+    busy.start(flip);
+    final first = busy.turn;
+    busy.start(flip);
+    expect(busy.turn, first, reason: 'the same card goes on');
+    busy.start(find);
+    busy.end(flip);
+    expect(busy.busy, isTrue);
+    expect(busy.turn, first + 1);
+    busy.end(find);
+    expect(busy.busy, isFalse);
   });
 
   test('cards seen and found; a card is known after three finds', () async {

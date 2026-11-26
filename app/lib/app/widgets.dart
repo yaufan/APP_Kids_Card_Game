@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -6,7 +7,82 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../core/cards.dart';
 import '../core/providers.dart';
+import '../core/voice.dart';
 import 'theme.dart';
+
+/// The screen that spoke last (its WidgetRef), so a screen going away
+/// hushes only its own line, never the next screen's first one.
+Object? _speaker;
+
+/// Says [zh] (and [en] after it, if the parent turned English on) out loud,
+/// if the parent left the voice on. Completes when it has been said (or was
+/// cut off by the next line).
+Future<void> speak(WidgetRef ref, String zh, {String? en}) {
+  final s = ref.read(gameProvider).settings;
+  if (!s.voice) return Future.value();
+  _speaker = ref;
+  return ref.read(voiceProvider).say(zh, en: s.english ? en : null);
+}
+
+/// A screen that stops its own voice when the child leaves it, so a line
+/// ("小狗在哪裡？") does not go on over the next screen.
+mixin HushOnLeave<T extends ConsumerStatefulWidget> on ConsumerState<T> {
+  late final Voice _hush;
+  late final Object _me;
+
+  @override
+  void initState() {
+    super.initState();
+    _hush = ref.read(voiceProvider);
+    _me = ref;
+  }
+
+  @override
+  void dispose() {
+    if (identical(_speaker, _me)) {
+      _speaker = null;
+      _hush.stop();
+    }
+    super.dispose();
+  }
+}
+
+/// Runs [then] after [min], and not before the line [after] has been said
+/// (at most [atMost] of waiting for it), so a slow voice is not cut off by
+/// what comes next; [cancel] stops it.
+class Later {
+  Later(Duration min, VoidCallback then, {Future<void>? after, Duration atMost = const Duration(seconds: 8)}) : _then = then {
+    _timer = Timer(min, () {
+      _timeUp = true;
+      _fire();
+    });
+    if (after == null) {
+      _heard = true;
+    } else {
+      after.timeout(atMost).then((_) => _hear(), onError: (_) => _hear());
+    }
+  }
+
+  final VoidCallback _then;
+  late final Timer _timer;
+  var _timeUp = false, _heard = false, _over = false;
+
+  void _hear() {
+    _heard = true;
+    _fire();
+  }
+
+  void _fire() {
+    if (_over || !_timeUp || !_heard) return;
+    _over = true;
+    _then();
+  }
+
+  void cancel() {
+    _over = true;
+    _timer.cancel();
+  }
+}
 
 /// A card's picture in the chosen style.
 class CardPicture extends StatelessWidget {

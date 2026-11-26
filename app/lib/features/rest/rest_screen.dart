@@ -34,7 +34,7 @@ class RestScreen extends ConsumerStatefulWidget {
   ConsumerState<RestScreen> createState() => _RestScreenState();
 }
 
-class _RestScreenState extends ConsumerState<RestScreen> {
+class _RestScreenState extends ConsumerState<RestScreen> with HushOnLeave {
   late final Sounds _sounds;
   late final CardItem _card;
 
@@ -47,7 +47,7 @@ class _RestScreenState extends ConsumerState<RestScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _sounds.play('rest');
-      if (ref.read(gameProvider).settings.voice) ref.read(voiceProvider).say(Strings.restLine(_card).replaceAll('\n', ''));
+      speak(ref, Strings.restLine(_card).replaceAll('\n', ''));
     });
   }
 
@@ -58,16 +58,17 @@ class _RestScreenState extends ConsumerState<RestScreen> {
   }
 
   Future<void> _parent() async {
-    if (!await showParentGate(context) || !mounted) return;
+    // The answer lets play go on; it does not open parent mode.
+    if (!await showParentGate(context, pass: false) || !mounted) return;
     ref.read(gameProvider.notifier).change((g) => g.playOn());
-    ref.read(sessionStartProvider.notifier).restart();
+    ref.read(sittingProvider).restart();
     context.go('/');
   }
 
   @override
   Widget build(BuildContext context) {
     final cartoon = ref.watch(cartoonProvider);
-    return Scaffold(
+    final page = Scaffold(
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFFEDEAF4), Calm.paper]),
@@ -133,6 +134,8 @@ class _RestScreenState extends ConsumerState<RestScreen> {
         ),
       ),
     );
+    // The system back does nothing here (it used to close the app).
+    return PopScope(canPop: false, child: page);
   }
 }
 
