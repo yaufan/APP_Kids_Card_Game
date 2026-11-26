@@ -66,6 +66,19 @@ class SystemSounds implements Sounds {
     _lifecycle = AppLifecycleListener(onHide: () => _setAway(true), onShow: () => _setAway(false));
   }
 
+  /// Where the sounds play: on Android the media volume (not the ringer, so
+  /// they are not silent in vibrate or silent mode), never taking the audio
+  /// focus, so the effects, the music and the voice never stop each other;
+  /// on iOS an ambient session that mixes with the voice.
+  static final effectsContext = AudioContext(
+    android: const AudioContextAndroid(usageType: AndroidUsageType.game, contentType: AndroidContentType.sonification, audioFocus: AndroidAudioFocus.none),
+    iOS: AudioContextIOS(category: AVAudioSessionCategory.ambient),
+  );
+  static final musicContext = AudioContext(
+    android: const AudioContextAndroid(usageType: AndroidUsageType.media, contentType: AndroidContentType.music, audioFocus: AndroidAudioFocus.none),
+    iOS: AudioContextIOS(category: AVAudioSessionCategory.ambient),
+  );
+
   static const _sfxVolume = 0.85, _musicVolume = 0.35;
 
   late final AppLifecycleListener _lifecycle;
@@ -90,9 +103,7 @@ class SystemSounds implements Sounds {
     _update();
   }
 
-  Future<void> _ready() => _setUp ??= AudioPlayer.global.setAudioContext(
-        AudioContextConfig(focus: AudioContextConfigFocus.mixWithOthers, respectSilence: true).build(),
-      );
+  Future<void> _ready() => _setUp ??= AudioPlayer.global.setAudioContext(effectsContext);
 
   @override
   void play(String sfx) {
@@ -103,7 +114,7 @@ class SystemSounds implements Sounds {
   Future<void> _play(String sfx) async {
     try {
       await _ready();
-      final pool = await (_pools[sfx] ??= AudioPool.createFromAsset(path: 'sounds/$sfx.wav', maxPlayers: 3));
+      final pool = await (_pools[sfx] ??= AudioPool.create(source: AssetSource('sounds/$sfx.wav'), maxPlayers: 3, audioContext: effectsContext));
       await pool.start(volume: _sfxVolume);
     } catch (_) {
       _pools.remove(sfx);
@@ -135,6 +146,7 @@ class SystemSounds implements Sounds {
       var loop = _loop;
       if (loop == null) {
         loop = _loop = AudioPlayer();
+        await loop.setAudioContext(musicContext);
         await loop.setReleaseMode(ReleaseMode.loop);
       }
       await loop.stop();
